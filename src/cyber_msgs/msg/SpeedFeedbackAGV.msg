@@ -1,3 +1,3 @@
 Header header
-int16 speed_left_cmps
-int16 speed_right_cmps
+float32 speed_left_cmps
+float32 speed_right_cmps
