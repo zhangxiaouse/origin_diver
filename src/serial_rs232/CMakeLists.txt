@@ -3,43 +3,44 @@ project(serial_rs232)
 
 add_compile_options(-std=c++11)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  serial
+find_package(
+  catkin REQUIRED
+  COMPONENTS roscpp
+             rospy
+             serial
+             geometry_msgs
+             nav_msgs
+             sensor_msgs
+             std_msgs
+             cyber_msgs
+             tf)
+
+catkin_package(
+  CATKIN_DEPENDS
   geometry_msgs
   nav_msgs
   sensor_msgs
+  roscpp
+  rospy
+  serial
   std_msgs
-  cyber_msgs
   tf
-)
+  DEPENDS
+  INCLUDE_DIRS
+  LIBRARIES)
 
-catkin_package(
-  CATKIN_DEPENDS geometry_msgs nav_msgs sensor_msgs roscpp rospy serial std_msgs tf
-  DEPENDS 
-  INCLUDE_DIRS include
-  LIBRARIES serial_rs232
-)
-
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
+include_directories(${catkin_INCLUDE_DIRS})
 
 add_executable(serial_pub_sub src/serial_pub_sub.cpp src/crcLib/crcLib.cpp)
 
-target_link_libraries(serial_pub_sub
-  ${catkin_LIBRARIES}
-)
-#add_dependencies(localization ${catkin_EXPORTED_TARGETS})
+target_link_libraries(serial_pub_sub ${catkin_LIBRARIES})
+# add_dependencies(localization ${catkin_EXPORTED_TARGETS})
 
-install(TARGETS serial_pub_sub
+install(
+  TARGETS serial_pub_sub
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
