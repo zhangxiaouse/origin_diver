@@ -19,10 +19,9 @@
 #include <iostream>
 
 serial::Serial ser;
-// serial::Timeout to = serial::Timeout::simpleTimeout(20);
 serial::Timeout to = serial::Timeout::simpleTimeout(serial::Timeout::max());
 
-std::string serial_port = "/dev/ttyS0";
+std::string serial_port = "/dev/ttyUSB0";
 int baudrate = 115200;
 std::string speed_topic = "/speed_feedback";
 std::string imu_topic = "/imu_virtual";
@@ -253,24 +252,40 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
+  std::vector<unsigned char> tempdata;
+
   ros::Rate loop_rate(5000);
   while (ros::ok()) {
     ros::spinOnce();
 
-    if (ser.available()) {
-      ser.read(recv_speed_data, 20);
-      speed_data_handle(pubSpeed, pubImu);
-    }
+    const int TARGET_LENGTH = 20;
+    const unsigned char TARGET_HEADER = 0x41;
 
+    if (ser.available()) {
+      auto num = ser.available();
+      ser.read(recv_speed_data, num);
+
+      for (int i = 0; i < num; i++) {
+        tempdata.push_back(recv_speed_data[i]);
+      }
+
+      while (tempdata.size() >= TARGET_LENGTH) {
+        if (tempdata.front() != TARGET_HEADER) {
+          tempdata.erase(tempdata.begin());
+          continue;
+        }
+        if (tempdata.size() >= TARGET_LENGTH) {
+          std::copy(tempdata.begin(), tempdata.begin() + TARGET_LENGTH,
+                    recv_speed_data);
+          tempdata.erase(tempdata.begin(), tempdata.begin() + TARGET_LENGTH);
+
+          // 处理提取出来的数据
+          speed_data_handle(pubSpeed, pubImu);
+        }
+      }
+    }
     loop_rate.sleep();
   }
-
-  // if(ser.available()){
-  //     ser.read(recv_speed_data, 20);
-  //     speed_data_handle(pubSpeed, pubImu);
-  // }
-
-  // ros::spin();
 
   return 0;
 }
