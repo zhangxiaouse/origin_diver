@@ -31,11 +31,8 @@ double wheel_distance = 0.64;
 unsigned char send_localization_data[20] = {0};
 unsigned char recv_speed_data[20] = {0};
 
-double now_time = 0.0;
+int localization_count = 0;
 
-int filter = 0;
-
-// define pub localization
 struct Datapub {
   u_char head;
   uint16_t localization_num;
@@ -44,20 +41,8 @@ struct Datapub {
   int16_t yaw_mm;
   u_char localization_truth;
   u_char command_info;
-
-  uint16_t crc_16;
 };
-
-double x = 0.0;
-double y = 0.0;
-double yaw = 0.0;
-int localization_count = 0;
 Datapub dataPub;
-
-// define sub speed
-// cyber_msgs::SpeedFeedback speed_data_msg;
-cyber_msgs::SpeedFeedbackAGV speed_data_msg;
-sensor_msgs::Imu imu_data_msg;
 
 struct Datasub {
   u_char head;
@@ -65,14 +50,13 @@ struct Datasub {
   int32_t speed_left;
   int32_t speed_right;
   uint32_t timestamp;
-
-  uint16_t crc_16;
 };
-
 Datasub dataSub;
-int compute_crc_sub;
 
-void send_to_senddata() {
+ros::Publisher pubSpeed;
+ros::Publisher pubImu;
+
+void send_to_senddata(const Datapub &dataPub) {
 
   send_localization_data[0] = dataPub.head;
   uint16_t temp_16 = dataPub.localization_num;
@@ -102,8 +86,7 @@ void send_to_senddata() {
   send_localization_data[13] = dataPub.localization_truth;
   send_localization_data[14] = dataPub.command_info;
 
-  dataPub.crc_16 = crc16(send_localization_data, 18);
-  temp_16 = dataPub.crc_16;
+  temp_16 = crc16(send_localization_data, 18);
   for (int i = 19; i > 17; i--) {
     send_localization_data[i] = 0;
     send_localization_data[i] |= temp_16;
@@ -112,14 +95,12 @@ void send_to_senddata() {
 }
 
 void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
-
-  // filter++;
-
-  if (ros::Time::now().toSec() - now_time >= 0.05) {
+  static double last_time = ros::Time::now().toSec();
+  if (ros::Time::now().toSec() - last_time >= 0.05) {
     // ROS_INFO("Callback time: %lf.", ros::Time::now().toSec());
-    now_time = ros::Time::now().toSec();
-    x = msg->pose.pose.position.x;
-    y = msg->pose.pose.position.y;
+    last_time = ros::Time::now().toSec();
+    auto x = msg->pose.pose.position.x;
+    auto y = msg->pose.pose.position.y;
 
     // 3D -> 2D
     tf::Quaternion quat;
@@ -140,9 +121,7 @@ void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
     dataPub.localization_truth = 1;
     dataPub.command_info = 1;
 
-    dataPub.crc_16 = 0;
-
-    send_to_senddata();
+    send_to_senddata(dataPub);
 
     ser.write(send_localization_data, 20);
     send_localization_data[20] = {0};
@@ -163,75 +142,22 @@ void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
 
 // }
 
-void speed_data_tomsg() {
-
-  speed_data_msg.header.stamp = ros::Time::now();
-
-  speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
-  speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
-}
-
-void imu_data_tomsg() {
-
-  imu_data_msg.header.stamp = ros::Time::now();
-  imu_data_msg.angular_velocity.z =
-      (dataSub.speed_right - dataSub.speed_left) * 0.001 /
-      wheel_distance; // 0.64 = distance of two wheels
-}
-
-void speed_data_handle(ros::Publisher pubSpeed, ros::Publisher pubImu) {
-  //  begin decoding datas
-  ROS_INFO("Begin decoding...");
-
-  if (recv_speed_data[0] == 0x41 &&
-      ((recv_speed_data[18] << 8) | recv_speed_data[19]) ==
-          crc16(recv_speed_data, 18)) {
-
-    uint16_t temp_16_s = (recv_speed_data[1] << 8) | (recv_speed_data[2]);
-    dataSub.localization_num = temp_16_s;
-    uint32_t temp_32_s = (recv_speed_data[3] << 24) |
-                         (recv_speed_data[4] << 16) |
-                         (recv_speed_data[5] << 8) | (recv_speed_data[6]);
-    dataSub.speed_left = int(temp_32_s);
-    temp_32_s = (recv_speed_data[7] << 24) | (recv_speed_data[8] << 16) |
-                (recv_speed_data[9] << 8) | (recv_speed_data[10]);
-    dataSub.speed_right = int(temp_32_s);
-    temp_32_s = (recv_speed_data[11] << 24) | (recv_speed_data[12] << 16) |
-                (recv_speed_data[13] << 8) | (recv_speed_data[14]);
-    dataSub.timestamp = int(temp_32_s);
-    ROS_INFO("Read data num %u.", dataSub.localization_num);
-    if (abs(dataSub.localization_num - localization_count) > 5) {
-      ROS_WARN("Communication delay beyond 0.05s!");
-    }
-    speed_data_tomsg();
-    imu_data_tomsg();
-    pubSpeed.publish(speed_data_msg);
-    pubImu.publish(imu_data_msg);
-  } else {
-    ROS_WARN("InValid Data, Something got wrong... ");
-  }
-}
-
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "serial_pub_sub");
   ros::NodeHandle n("~");
 
-  // double now_time = ros::Time::now().toSec();
-
   n.param("serial_port", serial_port, serial_port);
-  std::cout << serial_port << std::endl;
-  std::cout << serial_port << std::endl;
   n.param("baudrate", baudrate, baudrate);
   n.param("speed_topic", speed_topic, speed_topic);
   n.param("imu_topic", imu_topic, imu_topic);
   n.param("localization_topic", localization_topic, localization_topic);
   n.param("wheel_distance", wheel_distance, wheel_distance);
 
-  // ros::Publisher pubSpeed =
+  std::cout << serial_port << std::endl;
+
   // n.advertise<cyber_msgs::SpeedFeedback>(speed_topic, 1000);
-  ros::Publisher pubSpeed =
-      n.advertise<cyber_msgs::SpeedFeedbackAGV>(speed_topic, 1000);
-  ros::Publisher pubImu = n.advertise<sensor_msgs::Imu>(imu_topic, 1000);
+  pubSpeed = n.advertise<cyber_msgs::SpeedFeedbackAGV>(speed_topic, 100);
+  pubImu = n.advertise<sensor_msgs::Imu>(imu_topic, 100);
   ros::Subscriber sublocalization =
       n.subscribe(localization_topic, 1, localizationCallback);
 
@@ -245,7 +171,6 @@ int main(int argc, char *argv[]) {
     ROS_ERROR("Unable to open %s!", serial_port.c_str());
     return -1;
   }
-
   if (ser.isOpen()) {
     ROS_INFO("%s is opened.", serial_port.c_str());
   } else {
@@ -254,14 +179,14 @@ int main(int argc, char *argv[]) {
 
   std::vector<unsigned char> tempdata;
 
-  ros::Rate loop_rate(5000);
+  ros::Rate loop_rate(20);
   while (ros::ok()) {
     ros::spinOnce();
 
     const int TARGET_LENGTH = 20;
     const unsigned char TARGET_HEADER = 0x41;
 
-    if (ser.available()) {
+    if (ser.available() > 10) {
       auto num = ser.available();
       ser.read(recv_speed_data, num);
 
@@ -275,15 +200,79 @@ int main(int argc, char *argv[]) {
           continue;
         }
         if (tempdata.size() >= TARGET_LENGTH) {
+          unsigned char recv_speed_data_temp[20] = {0};
           std::copy(tempdata.begin(), tempdata.begin() + TARGET_LENGTH,
-                    recv_speed_data);
+                    recv_speed_data_temp);
           tempdata.erase(tempdata.begin(), tempdata.begin() + TARGET_LENGTH);
 
           // 处理提取出来的数据
-          speed_data_handle(pubSpeed, pubImu);
+          ROS_INFO("Begin decoding...");
+          if (((recv_speed_data_temp[18] << 8) | recv_speed_data_temp[19]) ==
+              crc16(recv_speed_data_temp, 18)) {
+
+            uint16_t temp_16_s =
+                (recv_speed_data_temp[1] << 8) | (recv_speed_data_temp[2]);
+            dataSub.localization_num = temp_16_s;
+            uint32_t temp_32_s = (recv_speed_data_temp[3] << 24) |
+                                 (recv_speed_data_temp[4] << 16) |
+                                 (recv_speed_data_temp[5] << 8) |
+                                 (recv_speed_data_temp[6]);
+            dataSub.speed_left = int(temp_32_s);
+            temp_32_s = (recv_speed_data_temp[7] << 24) |
+                        (recv_speed_data_temp[8] << 16) |
+                        (recv_speed_data_temp[9] << 8) |
+                        (recv_speed_data_temp[10]);
+            dataSub.speed_right = int(temp_32_s);
+            temp_32_s = (recv_speed_data_temp[11] << 24) |
+                        (recv_speed_data_temp[12] << 16) |
+                        (recv_speed_data_temp[13] << 8) |
+                        (recv_speed_data_temp[14]);
+            dataSub.timestamp = int(temp_32_s);
+            ROS_INFO("Read data num %u.", dataSub.localization_num);
+            if (abs(dataSub.localization_num - localization_count) > 5) {
+              ROS_WARN("Communication delay beyond 0.05s!");
+            }
+          } else {
+            ROS_WARN("InValid Data, Something got wrong... ");
+          }
         }
       }
     }
+    cyber_msgs::SpeedFeedbackAGV speed_data_msg;
+
+    speed_data_msg.header.stamp = ros::Time::now();
+
+    speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
+    speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
+    std::cout << speed_data_msg.speed_left_cmps << "  "
+              << speed_data_msg.speed_right_cmps << std::endl;
+    std::cout << "11" << std::endl;
+    pubSpeed.publish(speed_data_msg);
+    sensor_msgs::Imu imu_data_msg;
+    imu_data_msg.header.stamp = ros::Time::now();
+
+    imu_data_msg.header.frame_id = "base_link";
+    imu_data_msg.angular_velocity.x = 1.0;
+    imu_data_msg.angular_velocity.y = 2.0;
+    // 0.64 = distance of two wheels
+    // imu_data_msg.angular_velocity.z =
+    //     (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
+
+    imu_data_msg.angular_velocity.x = 1.0;
+    imu_data_msg.angular_velocity.y = 2.0;
+    imu_data_msg.angular_velocity.z = 3.0;
+
+    imu_data_msg.linear_acceleration.x = 0.1;
+    imu_data_msg.linear_acceleration.y = 0.2;
+    imu_data_msg.linear_acceleration.z = 0.3;
+
+    imu_data_msg.orientation.x = 0.0;
+    imu_data_msg.orientation.y = 0.0;
+    imu_data_msg.orientation.z = 0.0;
+    imu_data_msg.orientation.w = 1.0;
+
+    pubImu.publish(imu_data_msg);
+    std::cout << "22" << std::endl;
     loop_rate.sleep();
   }
 
