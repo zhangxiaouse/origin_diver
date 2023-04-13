@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(serial_rs232)
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
 
 find_package(
   catkin REQUIRED
@@ -26,7 +26,6 @@ catkin_package(
   std_msgs
   tf
   DEPENDS
-  INCLUDE_DIRS
   LIBRARIES)
 
 include_directories(${catkin_INCLUDE_DIRS})
