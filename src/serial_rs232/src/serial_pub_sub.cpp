@@ -101,10 +101,7 @@ void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
     // 3D -> 2D
     tf::Quaternion quat;
     double roll, pitch, yaw;
-    quat.setX(msg->pose.pose.orientation.x);
-    quat.setY(msg->pose.pose.orientation.y);
-    quat.setZ(msg->pose.pose.orientation.z);
-    quat.setW(msg->pose.pose.orientation.w);
+    tf::quaternionMsgToTF(msg->pose.pose.orientation, quat);
     tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
 
     localization_count++;
@@ -172,60 +169,51 @@ int main(int argc, char *argv[]) {
   }
 
   ros::Rate loop_rate(20);
-  std::vector<unsigned char> tempdata;
+  std::vector<unsigned char> read_buffer;
   while (ros::ok()) {
     ros::spinOnce();
 
     const int TARGET_LENGTH = 20;
     const unsigned char TARGET_HEADER = 0x41;
 
-    if (ser.available() > 10) {
+    if (auto num = ser.available()) {
+      std::vector<unsigned char> recv_data(num);
 
-      auto num = ser.available();
+      ser.read(recv_data.data(), num);
+      read_buffer.insert(read_buffer.end(), recv_data.begin(), recv_data.end());
 
-      unsigned char recv_speed_data[num] = {0};
-      ser.read(recv_speed_data, num);
-
-      for (int i = 0; i < num; i++) {
-        tempdata.push_back(recv_speed_data[i]);
-      }
-
-      while (tempdata.size() >= TARGET_LENGTH) {
-        if (tempdata.front() != TARGET_HEADER) {
-          tempdata.erase(tempdata.begin());
+      while (read_buffer.size() >= TARGET_LENGTH) {
+        if (read_buffer.front() != TARGET_HEADER) {
+          read_buffer.erase(read_buffer.begin());
           continue;
         }
-        if (tempdata.size() >= TARGET_LENGTH) {
-          unsigned char recv_speed_data_temp[20] = {0};
-          std::copy(tempdata.begin(), tempdata.begin() + TARGET_LENGTH,
-                    recv_speed_data_temp);
-          tempdata.erase(tempdata.begin(), tempdata.begin() + TARGET_LENGTH);
+        if (read_buffer.size() >= TARGET_LENGTH) {
+          std::vector<unsigned char> parse_speed_data(TARGET_LENGTH);
+          std::move(read_buffer.begin(), read_buffer.begin() + TARGET_LENGTH,
+                    parse_speed_data.begin());
+          read_buffer.erase(read_buffer.begin(),
+                            read_buffer.begin() + TARGET_LENGTH);
 
           // 处理提取出来的数据
-          ROS_INFO("Begin decoding...");
-          if (((recv_speed_data_temp[18] << 8) | recv_speed_data_temp[19]) ==
-              crc16(recv_speed_data_temp, 18)) {
+          // ROS_INFO("Begin decoding...");
+          if (((parse_speed_data[18] << 8) | parse_speed_data[19]) ==
+              crc16(parse_speed_data.data(), 18)) {
             dataSub.localization_num =
-                (uint16_t)((recv_speed_data_temp[1] << 8) |
-                           recv_speed_data_temp[2]);
-            dataSub.speed_left = (int32_t)((recv_speed_data_temp[3] << 24) |
-                                           (recv_speed_data_temp[4] << 16) |
-                                           (recv_speed_data_temp[5] << 8) |
-                                           recv_speed_data_temp[6]);
-            dataSub.speed_right = (int32_t)((recv_speed_data_temp[7] << 24) |
-                                            (recv_speed_data_temp[8] << 16) |
-                                            (recv_speed_data_temp[9] << 8) |
-                                            recv_speed_data_temp[10]);
-            dataSub.timestamp = (int32_t)((recv_speed_data_temp[11] << 24) |
-                                          (recv_speed_data_temp[12] << 16) |
-                                          (recv_speed_data_temp[13] << 8) |
-                                          recv_speed_data_temp[14]);
-            // ROS_INFO("Read data num %u.", dataSub.localization_num);
-            // if (abs(dataSub.localization_num - localization_count) > 5) {
-            //   ROS_WARN("Communication delay beyond 0.05s!");
-            // }
+                (uint16_t)((parse_speed_data[1] << 8) | parse_speed_data[2]);
+            dataSub.speed_left =
+                (int32_t)((parse_speed_data[3] << 24) |
+                          (parse_speed_data[4] << 16) |
+                          (parse_speed_data[5] << 8) | parse_speed_data[6]);
+            dataSub.speed_right =
+                (int32_t)((parse_speed_data[7] << 24) |
+                          (parse_speed_data[8] << 16) |
+                          (parse_speed_data[9] << 8) | parse_speed_data[10]);
+            dataSub.timestamp =
+                (int32_t)((parse_speed_data[11] << 24) |
+                          (parse_speed_data[12] << 16) |
+                          (parse_speed_data[13] << 8) | parse_speed_data[14]);
           } else {
-            ROS_WARN("InValid Data, Something got wrong... ");
+            ROS_WARN("Invalid Data, Something went wrong...");
           }
         }
       }
