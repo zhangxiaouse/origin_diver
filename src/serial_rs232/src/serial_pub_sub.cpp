@@ -6,8 +6,9 @@
  * @ Description: agv communication by rs232.
  */
 #include "crcLib/crcLib.h"
-#include "cyber_msgs/LocalizationEstimate.h"
+
 // #include "cyber_msgs/SpeedFeedback.h"
+#include "cyber_msgs/LocalizationEstimate.h"
 #include "cyber_msgs/SpeedFeedbackAGV.h"
 #include "nav_msgs/Odometry.h"
 #include "ros/ros.h"
@@ -134,12 +135,11 @@ void send_to_senddata(const Datapub &dataPub,
 void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
   static double last_time = ros::Time::now().toSec();
   if (ros::Time::now().toSec() - last_time >= 0.05) {
-    ROS_INFO("Callback time: %lf.", ros::Time::now().toSec());
+    ROS_INFO("Localization Callback time: %lf.", ros::Time::now().toSec());
     last_time = ros::Time::now().toSec();
     auto x = msg->pose.pose.position.x;
     auto y = msg->pose.pose.position.y;
 
-    // 3D -> 2D
     tf::Quaternion quat;
     double roll, pitch, yaw;
     tf::quaternionMsgToTF(msg->pose.pose.orientation, quat);
@@ -156,6 +156,29 @@ void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
     dataPub.localization_truth = 1;
     dataPub.command_info = 1;
   }
+}
+
+void timer20hzcb(const ros::TimerEvent &) {
+  std::cout << " prepare publish ros data" << std::endl;
+  std::cout << "  data [" << dataSub.speed_left << ", " << dataSub.speed_right
+            << "] " << std::endl;
+
+  std::vector<unsigned char> send_localization_vector;
+  send_to_senddata(dataPub, send_localization_vector);
+  serial_ptr_->write(send_localization_vector);
+
+  cyber_msgs::SpeedFeedbackAGV speed_data_msg;
+  speed_data_msg.header.stamp = ros::Time::now();
+  speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
+  speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
+  pubSpeed.publish(speed_data_msg);
+
+  sensor_msgs::Imu imu_data_msg;
+  imu_data_msg.header.stamp = ros::Time::now();
+  imu_data_msg.header.frame_id = "base_link";
+  imu_data_msg.angular_velocity.z =
+      (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
+  pubImu.publish(imu_data_msg);
 }
 
 void reveive() {
@@ -199,28 +222,6 @@ void reveive() {
   }
 }
 
-void timer20hzcb(const ros::TimerEvent &) {
-  std::cout << " prepare publish ros data" << std::endl;
-  std::cout << "  data [" << dataSub.speed_left << ", " << dataSub.speed_right
-            << "] " << std::endl;
-
-  std::vector<unsigned char> send_localization_vector;
-  send_to_senddata(dataPub, send_localization_vector);
-  serial_ptr_->write(send_localization_vector);
-
-  cyber_msgs::SpeedFeedbackAGV speed_data_msg;
-  speed_data_msg.header.stamp = ros::Time::now();
-  speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
-  speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
-  pubSpeed.publish(speed_data_msg);
-
-  sensor_msgs::Imu imu_data_msg;
-  imu_data_msg.header.stamp = ros::Time::now();
-  imu_data_msg.header.frame_id = "base_link";
-  imu_data_msg.angular_velocity.z =
-      (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
-  pubImu.publish(imu_data_msg);
-}
 // void speed_data_tomsg(){
 //     speed_data_msg.header.stamp = ros::Time::now();
 //     speed_data_msg.speed_cmps = (dataSub.speed_left +
@@ -249,6 +250,7 @@ int main(int argc, char *argv[]) {
   auto sublocalization =
       n.subscribe(localization_topic, 1, localizationCallback);
   publish_timer = n.createTimer(ros::Duration(0.05), timer20hzcb);
+
   serial_ptr_ = std::make_shared<SerialPort>(serial_port, baudrate);
   if (!serial_ptr_->open()) {
     return -1;
