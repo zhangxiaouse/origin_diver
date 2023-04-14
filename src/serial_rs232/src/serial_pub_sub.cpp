@@ -194,17 +194,20 @@ int main(int argc, char *argv[]) {
   ros::Rate loop_rate(20);
   std::vector<unsigned char> read_buffer;
   while (ros::ok()) {
+    std::cout << "ROS-SPIN-ONCE:" << std::endl;
     ros::spinOnce();
     const int TARGET_LENGTH = 20;
     const unsigned char TARGET_HEADER = 0x41;
 
     serial.read(read_buffer);
-
+    std::cout << read_buffer.size() << std::endl;
     while (read_buffer.size() >= TARGET_LENGTH) {
+      std::cout << "   size > length" << std::endl;
       if (read_buffer.front() != TARGET_HEADER) {
         read_buffer.erase(read_buffer.begin());
         continue;
       }
+      std::cout << "   front() == TARGET_HEADER" << std::endl;
       if (read_buffer.size() >= TARGET_LENGTH) {
         std::vector<unsigned char> parse_speed_data(TARGET_LENGTH);
         std::move(read_buffer.begin(), read_buffer.begin() + TARGET_LENGTH,
