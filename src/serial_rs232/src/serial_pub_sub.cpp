@@ -87,6 +87,8 @@ struct Datapub {
   int16_t yaw_mm;
   u_char localization_truth;
   u_char command_info;
+
+  bool isNew;
 };
 Datapub dataPub;
 
@@ -133,45 +135,49 @@ void send_to_senddata(const Datapub &dataPub,
 }
 
 void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
-  static double last_time = ros::Time::now().toSec();
-  if (ros::Time::now().toSec() - last_time >= 0.05) {
-    ROS_INFO("Localization Callback time: %lf.", ros::Time::now().toSec());
-    last_time = ros::Time::now().toSec();
-    auto x = msg->pose.pose.position.x;
-    auto y = msg->pose.pose.position.y;
+  auto x = msg->pose.pose.position.x;
+  auto y = msg->pose.pose.position.y;
 
-    tf::Quaternion quat;
-    double roll, pitch, yaw;
-    tf::quaternionMsgToTF(msg->pose.pose.orientation, quat);
-    tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+  tf::Quaternion quat;
+  double roll, pitch, yaw;
+  tf::quaternionMsgToTF(msg->pose.pose.orientation, quat);
+  tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
 
-    static int localization_count = 0;
-    localization_count++;
+  static int localization_count = 0;
+  localization_count++;
 
-    dataPub.head = 0x41;
-    dataPub.localization_num = localization_count;
-    dataPub.x_mm = int(x * 1000);
-    dataPub.y_mm = int(y * 1000);
-    dataPub.yaw_mm = float(yaw / (2 * M_PI) * 360 * 10);
-    dataPub.localization_truth = 1;
-    dataPub.command_info = 1;
-  }
+  dataPub.head = 0x41;
+  dataPub.localization_num = localization_count;
+  dataPub.x_mm = int(x * 1000);
+  dataPub.y_mm = int(y * 1000);
+  dataPub.yaw_mm = float(yaw / (2 * M_PI) * 360 * 10);
+  dataPub.localization_truth = 1;
+  dataPub.command_info = 1;
+
+  dataPub.isNew = true;
 }
 
 void timer20hzcb(const ros::TimerEvent &) {
-  std::cout << " prepare publish ros data" << std::endl;
-  std::cout << "  data [" << dataSub.speed_left << ", " << dataSub.speed_right
-            << "] " << std::endl;
-
-  std::vector<unsigned char> send_localization_vector;
-  send_to_senddata(dataPub, send_localization_vector);
-  serial_ptr_->write(send_localization_vector);
+  static double last_time = ros::Time::now().toSec();
+  if (dataPub.isNew == true) {
+    last_time = ros::Time::now().toSec();
+    std::vector<unsigned char> send_localization_vector;
+    send_to_senddata(dataPub, send_localization_vector);
+    serial_ptr_->write(send_localization_vector);
+    dataPub.isNew = false;
+  }
+  if (ros::Time::now().toSec() - last_time >= 0.05) {
+    ROS_WARN("Localization data lost about : %lfs.",
+             ros::Time::now().toSec() - last_time);
+  }
 
   cyber_msgs::SpeedFeedbackAGV speed_data_msg;
   speed_data_msg.header.stamp = ros::Time::now();
   speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
   speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
   pubSpeed.publish(speed_data_msg);
+  std::cout << " publish ros data [" << dataSub.speed_left << ", "
+            << dataSub.speed_right << "] " << std::endl;
 
   sensor_msgs::Imu imu_data_msg;
   imu_data_msg.header.stamp = ros::Time::now();
