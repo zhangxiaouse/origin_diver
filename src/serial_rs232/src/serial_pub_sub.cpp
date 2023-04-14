@@ -16,6 +16,7 @@
 #include "serial/serial.h"
 #include "tf/transform_datatypes.h"
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -23,10 +24,6 @@ std::string speed_topic = "/speed_feedback";
 std::string imu_topic = "/imu_virtual";
 std::string localization_topic = "/localization/estimation_odom";
 double wheel_distance = 0.64;
-
-unsigned char send_localization_data[20] = {0};
-
-int localization_count = 0;
 
 struct Datapub {
   u_char head;
@@ -48,42 +45,37 @@ struct Datasub {
 };
 Datasub dataSub;
 
-void send_to_senddata(const Datapub &dataPub) {
+void write_le(unsigned char *buf, int offset, uint64_t value, int size) {
+  for (int i = 0; i < size; i++) {
+    buf[offset + i] = value & 0xFF;
+    value >>= 8;
+  }
+}
 
-  send_localization_data[0] = dataPub.head;
-  uint16_t temp_16 = dataPub.localization_num;
-  for (int i = 2; i > 0; i--) {
-    send_localization_data[i] = 0;
-    send_localization_data[i] |= temp_16;
-    temp_16 >>= 8;
+void write_be(unsigned char *buf, int offset, uint64_t value, int size) {
+  for (int i = size - 1; i >= 0; i--) {
+    buf[offset + i] = value & 0xFF;
+    value >>= 8;
   }
-  uint32_t temp_32 = dataPub.x_mm;
-  for (int i = 6; i > 2; i--) {
-    send_localization_data[i] = 0;
-    send_localization_data[i] |= temp_32;
-    temp_32 >>= 8;
-  }
-  temp_32 = dataPub.y_mm;
-  for (int i = 10; i > 6; i--) {
-    send_localization_data[i] = 0;
-    send_localization_data[i] |= temp_32;
-    temp_32 >>= 8;
-  }
-  temp_16 = dataPub.yaw_mm;
-  for (int i = 12; i > 10; i--) {
-    send_localization_data[i] = 0;
-    send_localization_data[i] |= temp_16;
-    temp_16 >>= 8;
-  }
-  send_localization_data[13] = dataPub.localization_truth;
-  send_localization_data[14] = dataPub.command_info;
+}
 
-  temp_16 = crc16(send_localization_data, 18);
-  for (int i = 19; i > 17; i--) {
-    send_localization_data[i] = 0;
-    send_localization_data[i] |= temp_16;
-    temp_16 >>= 8;
-  }
+void send_to_senddata(const Datapub &dataPub,
+                      std::vector<unsigned char> &buff) {
+  unsigned char send_localization_data[20] = {0};
+
+  write_be(send_localization_data, 0, dataPub.head, 1);
+  write_be(send_localization_data, 1, dataPub.localization_num, 2);
+  write_be(send_localization_data, 3, dataPub.x_mm, 4);
+  write_be(send_localization_data, 7, dataPub.y_mm, 4);
+  write_be(send_localization_data, 11, dataPub.yaw_mm, 2);
+  write_be(send_localization_data, 13, dataPub.localization_truth, 1);
+  write_be(send_localization_data, 14, dataPub.command_info, 1);
+  uint16_t temp_16 = crc16(send_localization_data, 18);
+  write_be(send_localization_data, 18, temp_16, 2);
+
+  std::vector<unsigned char> send_localization_vector(
+      send_localization_data, send_localization_data + 20);
+  buff = std::move(send_localization_vector);
 }
 
 void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
@@ -100,6 +92,7 @@ void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
     tf::quaternionMsgToTF(msg->pose.pose.orientation, quat);
     tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
 
+    static int localization_count = 0;
     localization_count++;
 
     dataPub.head = 0x41;
@@ -120,6 +113,7 @@ public:
     ser_.setBaudrate(baudrate_);
     ser_.setTimeout(to_);
   }
+  ~SerialPort() { ser_.close(); }
 
   bool open() {
     try {
@@ -138,10 +132,6 @@ public:
 
   bool isOpen() const { return ser_.isOpen(); }
 
-  void close() { ser_.close(); }
-
-  int available() { return ser_.available(); }
-
   void read(std::vector<unsigned char> &buffer) {
     auto num = ser_.available();
     std::vector<unsigned char> recv_data(num);
@@ -149,13 +139,15 @@ public:
     buffer.insert(buffer.end(), recv_data.begin(), recv_data.end());
   }
 
-  void write(const unsigned char *data, int size) { ser_.write(data, size); }
+  void write(const std::vector<unsigned char> &buffer) {
+    ser_.write(buffer.data(), buffer.size());
+  }
 
 private:
+  serial::Serial ser_;
   std::string port_;
   int baudrate_;
-  serial::Serial ser_;
-  serial::Timeout to_ = serial::Timeout::simpleTimeout(serial::Timeout::max());
+  serial::Timeout to_ = serial::Timeout::simpleTimeout(20);
 };
 
 // void speed_data_tomsg(){
@@ -183,7 +175,7 @@ int main(int argc, char *argv[]) {
 
   auto pubSpeed = n.advertise<cyber_msgs::SpeedFeedbackAGV>(speed_topic, 100);
   auto pubImu = n.advertise<sensor_msgs::Imu>(imu_topic, 100);
-  ros::Subscriber sublocalization =
+  auto sublocalization =
       n.subscribe(localization_topic, 1, localizationCallback);
 
   SerialPort serial(serial_port, baudrate);
@@ -239,9 +231,13 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    send_to_senddata(dataPub);
-    serial.write(send_localization_data, 20);
-    send_localization_data[20] = {0};
+    std::cout << " prepare publish ros data" << std::endl;
+    std::cout << "  data" << dataSub.speed_left << ", " << dataSub.speed_right
+              << std::endl;
+
+    std::vector<unsigned char> send_localization_vector;
+    send_to_senddata(dataPub, send_localization_vector);
+    serial.write(send_localization_vector);
 
     cyber_msgs::SpeedFeedbackAGV speed_data_msg;
     speed_data_msg.header.stamp = ros::Time::now();
