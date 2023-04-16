@@ -22,10 +22,10 @@
 #include <thread>
 #include <vector>
 
-ros::Timer publish_timer;
-
 ros::Publisher pubSpeed;
 ros::Publisher pubImu;
+
+bool hz20_;
 
 std::string speed_topic = "/speed_feedback";
 std::string imu_topic = "/imu_virtual";
@@ -157,36 +157,6 @@ void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
   dataPub.isNew = true;
 }
 
-void timer20hzcb(const ros::TimerEvent &) {
-  static double last_time = ros::Time::now().toSec();
-  if (dataPub.isNew == true) {
-    last_time = ros::Time::now().toSec();
-    std::vector<unsigned char> send_localization_vector;
-    send_to_senddata(dataPub, send_localization_vector);
-    serial_ptr_->write(send_localization_vector);
-    dataPub.isNew = false;
-  }
-  if (ros::Time::now().toSec() - last_time >= 0.05) {
-    ROS_WARN("Localization data lost about : %lfs.",
-             ros::Time::now().toSec() - last_time);
-  }
-
-  cyber_msgs::SpeedFeedbackAGV speed_data_msg;
-  speed_data_msg.header.stamp = ros::Time::now();
-  speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
-  speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
-  pubSpeed.publish(speed_data_msg);
-  std::cout << " publish ros data [" << dataSub.speed_left << ", "
-            << dataSub.speed_right << "] " << std::endl;
-
-  sensor_msgs::Imu imu_data_msg;
-  imu_data_msg.header.stamp = ros::Time::now();
-  imu_data_msg.header.frame_id = "base_link";
-  imu_data_msg.angular_velocity.z =
-      (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
-  pubImu.publish(imu_data_msg);
-}
-
 void reveive() {
   std::vector<unsigned char> read_buffer;
   const int TARGET_LENGTH = 20;
@@ -225,16 +195,65 @@ void reveive() {
         }
       }
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 
 // void speed_data_tomsg(){
-//     speed_data_msg.header.stamp = ros::Time::now();
+//     speed_data_msg.header.stamp = ros::T               ros::ok() ime::now();
 //     speed_data_msg.speed_cmps = (dataSub.speed_left +
 //     dataSub.speed_right)
 //     * 0.1 * 0.5; speed_data_msg.speed_kmph = (dataSub.speed_left +
 //     dataSub.speed_right) * 0.001 * 0.5 * 3.6;
 // }
+
+void send() {
+  while (ros::ok()) {
+    if (hz20_) {
+      static double last_time = ros::Time::now().toSec();
+      if (dataPub.isNew == true) {
+        last_time = ros::Time::now().toSec();
+        std::vector<unsigned char> send_localization_vector;
+        send_to_senddata(dataPub, send_localization_vector);
+        serial_ptr_->write(send_localization_vector);
+        dataPub.isNew = false;
+      }
+      if (ros::Time::now().toSec() - last_time >= 0.05) {
+        ROS_WARN("Localization data lost about : %lfs.",
+                 ros::Time::now().toSec() - last_time);
+      }
+
+      cyber_msgs::SpeedFeedbackAGV speed_data_msg;
+      speed_data_msg.header.stamp = ros::Time::now();
+      speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
+      speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
+      pubSpeed.publish(speed_data_msg);
+      std::cout << " publish ros data [" << dataSub.speed_left << ", "
+                << dataSub.speed_right << "] " << std::endl;
+
+      sensor_msgs::Imu imu_data_msg;
+      imu_data_msg.header.stamp = ros::Time::now();
+      imu_data_msg.header.frame_id = "base_link";
+      imu_data_msg.angular_velocity.z =
+          (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
+      pubImu.publish(imu_data_msg);
+
+      hz20_ = false;
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+  }
+}
+
+void timer() {
+  while (ros::ok()) {
+    static int count = 0;
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    if (count % 5 == 0) {
+      hz20_ = true;
+    }
+    count++;
+  }
+}
 
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "serial_pub_sub");
@@ -255,7 +274,6 @@ int main(int argc, char *argv[]) {
   pubImu = n.advertise<sensor_msgs::Imu>(imu_topic, 100);
   auto sublocalization =
       n.subscribe(localization_topic, 1, localizationCallback);
-  publish_timer = n.createTimer(ros::Duration(0.05), timer20hzcb);
 
   serial_ptr_ = std::make_shared<SerialPort>(serial_port, baudrate);
   if (!serial_ptr_->open()) {
@@ -263,6 +281,8 @@ int main(int argc, char *argv[]) {
   }
 
   std::thread receive_thread(&reveive);
+  std::thread timer_thread(&timer);
+  std::thread send_thread(&send);
 
   ros::spin();
 
