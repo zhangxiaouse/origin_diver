@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <mutex>
 #include <thread>
 #include <vector>
 
@@ -26,6 +27,8 @@ ros::Timer publish_timer;
 
 ros::Publisher pubSpeed;
 ros::Publisher pubImu;
+
+std::mutex dataSub_mtx;
 
 std::string speed_topic = "/speed_feedback";
 std::string imu_topic = "/imu_virtual";
@@ -171,19 +174,25 @@ void timer20hzcb(const ros::TimerEvent &) {
              ros::Time::now().toSec() - last_time);
   }
 
+  Datasub this_sub_4_pub;
+  {
+    std::lock_guard<std::mutex> lock(dataSub_mtx);
+    this_sub_4_pub = dataSub;
+  }
   cyber_msgs::SpeedFeedbackAGV speed_data_msg;
   speed_data_msg.header.stamp = ros::Time::now();
-  speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
-  speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
+  speed_data_msg.speed_left_cmps = this_sub_4_pub.speed_left * 0.1;
+  speed_data_msg.speed_right_cmps = this_sub_4_pub.speed_right * 0.1;
   pubSpeed.publish(speed_data_msg);
-  std::cout << " publish ros data [" << dataSub.speed_left << ", "
-            << dataSub.speed_right << "] " << std::endl;
+  std::cout << " publish ros data [" << this_sub_4_pub.speed_left << ", "
+            << this_sub_4_pub.speed_right << "] " << std::endl;
 
   sensor_msgs::Imu imu_data_msg;
   imu_data_msg.header.stamp = ros::Time::now();
   imu_data_msg.header.frame_id = "base_link";
   imu_data_msg.angular_velocity.z =
-      (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
+      (this_sub_4_pub.speed_right - this_sub_4_pub.speed_left) * 0.001 /
+      wheel_distance;
   pubImu.publish(imu_data_msg);
 }
 
@@ -206,6 +215,9 @@ void reveive() {
                           read_buffer.begin() + TARGET_LENGTH);
         if (((parse_speed_data[18] << 8) | parse_speed_data[19]) ==
             crc16(parse_speed_data.data(), 18)) {
+
+          std::lock_guard<std::mutex> lock(dataSub_mtx);
+
           dataSub.localization_num =
               (uint16_t)((parse_speed_data[1] << 8) | parse_speed_data[2]);
           dataSub.speed_left =
@@ -225,6 +237,7 @@ void reveive() {
         }
       }
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 
@@ -264,7 +277,9 @@ int main(int argc, char *argv[]) {
 
   std::thread receive_thread(&reveive);
 
-  ros::spin();
+  ros::AsyncSpinner spinner(2);
+  spinner.start();
+  ros::waitForShutdown();
 
   return 0;
 }
