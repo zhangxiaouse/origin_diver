@@ -26,8 +26,6 @@
 ros::Publisher pubSpeed;
 ros::Publisher pubImu;
 
-std::mutex dataSub_mtx;
-
 std::string speed_topic = "/speed_feedback";
 std::string imu_topic = "/imu_virtual";
 std::string localization_topic = "/localization/estimation_odom";
@@ -92,6 +90,7 @@ struct Datapub {
   bool isNew;
 };
 Datapub dataPub;
+std::mutex dataPub_mtx;
 
 struct Datasub {
   u_char head;
@@ -101,6 +100,7 @@ struct Datasub {
   uint32_t timestamp;
 };
 Datasub dataSub;
+std::mutex dataSub_mtx;
 
 void write_le(unsigned char *buf, int offset, uint64_t value, int size) {
   for (int i = 0; i < size; i++) {
@@ -144,18 +144,22 @@ void localizationCallback(const nav_msgs::OdometryConstPtr &msg) {
   tf::quaternionMsgToTF(msg->pose.pose.orientation, quat);
   tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
 
-  static int localization_count = 0;
-  localization_count++;
+  {
+    std::lock_guard<std::mutex> lock(dataPub_mtx);
 
-  dataPub.head = 0x41;
-  dataPub.localization_num = localization_count;
-  dataPub.x_mm = int(x * 1000);
-  dataPub.y_mm = int(y * 1000);
-  dataPub.yaw_mm = float(yaw / (2 * M_PI) * 360 * 10);
-  dataPub.localization_truth = 1;
-  dataPub.command_info = 1;
+    static int localization_count = 0;
+    localization_count++;
 
-  dataPub.isNew = true;
+    dataPub.head = 0x41;
+    dataPub.localization_num = localization_count;
+    dataPub.x_mm = int(x * 1000);
+    dataPub.y_mm = int(y * 1000);
+    dataPub.yaw_mm = float(yaw / (2 * M_PI) * 360 * 10);
+    dataPub.localization_truth = 1;
+    dataPub.command_info = 1;
+
+    dataPub.isNew = true;
+  }
 }
 
 void reveive() {
@@ -215,6 +219,7 @@ void send() {
   while (ros::ok()) {
     static double last_time = ros::Time::now().toSec();
     if (dataPub.isNew == true) {
+      std::lock_guard<std::mutex> lock(dataPub_mtx);
       last_time = ros::Time::now().toSec();
       std::vector<unsigned char> send_localization_vector;
       send_to_senddata(dataPub, send_localization_vector);
@@ -226,20 +231,23 @@ void send() {
                ros::Time::now().toSec() - last_time);
     }
 
-    cyber_msgs::SpeedFeedbackAGV speed_data_msg;
-    speed_data_msg.header.stamp = ros::Time::now();
-    speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
-    speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
-    pubSpeed.publish(speed_data_msg);
-    std::cout << " publish ros data [" << dataSub.speed_left << ", "
-              << dataSub.speed_right << "] " << std::endl;
+    {
+      std::lock_guard<std::mutex> lock(dataSub_mtx);
+      cyber_msgs::SpeedFeedbackAGV speed_data_msg;
+      speed_data_msg.header.stamp = ros::Time::now();
+      speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
+      speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
+      pubSpeed.publish(speed_data_msg);
+      std::cout << " publish ros data [" << dataSub.speed_left << ", "
+                << dataSub.speed_right << "] " << std::endl;
 
-    sensor_msgs::Imu imu_data_msg;
-    imu_data_msg.header.stamp = ros::Time::now();
-    imu_data_msg.header.frame_id = "base_link";
-    imu_data_msg.angular_velocity.z =
-        (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
-    pubImu.publish(imu_data_msg);
+      sensor_msgs::Imu imu_data_msg;
+      imu_data_msg.header.stamp = ros::Time::now();
+      imu_data_msg.header.frame_id = "base_link";
+      imu_data_msg.angular_velocity.z =
+          (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
+      pubImu.publish(imu_data_msg);
+    }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
