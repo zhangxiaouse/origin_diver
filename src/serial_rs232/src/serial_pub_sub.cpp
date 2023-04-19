@@ -198,6 +198,7 @@ void reveive() {
               (int32_t)((parse_speed_data[11] << 24) |
                         (parse_speed_data[12] << 16) |
                         (parse_speed_data[13] << 8) | parse_speed_data[14]);
+          read_buffer.clear();
         } else {
           ROS_WARN("Invalid Data, Something went wrong...");
         }
