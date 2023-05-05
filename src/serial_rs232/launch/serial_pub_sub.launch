@@ -1,7 +1,7 @@
 <launch>
     <node pkg="serial_rs232" type="serial_pub_sub" name="serial_pub_sub" output="screen">
 
-        <param name="serial_port" type="string" value="/dev/ttyS0"/>
+        <param name="serial_port" type="string" value="/dev/ttyUSB0"/>
         <param name="baudrate" type="int" value="115200"/>
         <param name="speed_topic" type="string" value="/speed_feedback"/>
         <param name="imu_topic" type="string" value="/imu_virtual"/>
