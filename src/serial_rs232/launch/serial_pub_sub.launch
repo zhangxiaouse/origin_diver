@@ -4,7 +4,6 @@
         <param name="serial_port" type="string" value="/dev/ttyUSB0"/>
         <param name="baudrate" type="int" value="115200"/>
         <param name="speed_topic" type="string" value="/speed_feedback"/>
-        <param name="imu_topic" type="string" value="/imu_virtual"/>
         <param name="localization_topic" type="string" value="/localization/estimation_odom"/>
         <param name="wheel_distance" type="double" value="0.64"/>
 
