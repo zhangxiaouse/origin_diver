@@ -12,7 +12,15 @@ namespace cyberc3
       tracer_ptr_ = std::make_shared<cyberc3::vehicle::tracer>();
       array_pub_ptr_ = std::make_shared<cyberc3::pub::arrayPub>(nh_, "/tracer/can_data", 1);
       publish_vehicle_speed_ = nh_.advertise<cyber_msgs::AGVSpeedFeedback>("/tracer/speedback", 1);
+
+      subscriber_agv_speed_ = nh_.subscribe("/agv/speedcmd", 1, &tracer_can_driver_node::speed_msg_callback, this);
       timer_50hz_ = nh_.createTimer(ros::Duration(0.02), &tracer_can_driver_node::Timer50hzCallback, this);
+    }
+
+    void tracer_can_driver_node::speed_msg_callback(const cyber_msgs::AGVSpeedCmd msg)
+    {
+      left_speed = msg.left_cmd_mps;
+      right_speed = msg.right_cmd_mps;
     }
 
     void tracer_can_driver_node::receive()
