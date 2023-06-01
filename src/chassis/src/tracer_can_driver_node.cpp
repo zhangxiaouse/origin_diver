@@ -10,6 +10,9 @@ namespace cyberc3
     {
       can_bridge_ptr_.reset(new cyber_c3::can_bridge::lcan(false));
       tracer_ptr_ = std::make_shared<cyberc3::vehicle::tracer>();
+      array_pub_ptr_ = std::make_shared<cyberc3::pub::arrayPub>(nh_, "/tracer/can_data", 1);
+      publish_vehicle_speed_ = nh_.advertise<cyber_msgs::AGVSpeedFeedback>("/tracer/speedback", 1);
+      timer_50hz_ = nh_.createTimer(ros::Duration(0.02), &tracer_can_driver_node::Timer50hzCallback, this);
     }
 
     void tracer_can_driver_node::receive()
@@ -37,19 +40,17 @@ namespace cyberc3
         {
           can_frame_[i] = thiscan.data[i - 2];
         }
-        // time_ = ros::Time::now().nsec;
-        // array_pub_ptr_->Publish(can_frame_, 10, 1);
-        // for (auto n : autotrike_ptr_->WhiteList)
-        // {
-        //   if (n == thiscan.id)
-        //   {
-        //     autotrike_ptr_->Decode(thiscan, ros::Time::now().toSec(),
-        //                            param_steer_null_point, car.speed_feedback_,
-        //                            car.steer_feedback_, brake_position,
-        //                            motor_error);
-        //     break;
-        //   }
-        // }
+        time_ = ros::Time::now().nsec;
+        array_pub_ptr_->Publish(can_frame_, 10, 1);
+        for (auto n : tracer_ptr_->WhiteList)
+        {
+          if (n == thiscan.id)
+          {
+            tracer_ptr_->Decode(thiscan, ros::Time::now().toSec(), tracer_feedback_ptr_);
+
+            break;
+          }
+        }
       }
     }
 
@@ -57,9 +58,12 @@ namespace cyberc3
     // {
     // }
 
-    // void tracer_can_driver_node::Timer50hzCallback(const ros::TimerEvent &)
-    // {
-    // }
+    void tracer_can_driver_node::Timer50hzCallback(const ros::TimerEvent &)
+    {
+      agv_speed_feedback_.left_speed_mps = tracer_feedback_ptr_.speed;
+      agv_speed_feedback_.right_speed_mps = tracer_feedback_ptr_.speed;
+      publish_vehicle_speed_.publish(agv_speed_feedback_);
+    }
   } // namespace node
 } // namespace cyberc3
 

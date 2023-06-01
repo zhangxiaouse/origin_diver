@@ -22,6 +22,8 @@ include_directories(
 set (SRCS   
 src/tracer/tracer.cc
 src/lcan/lcan.cc
+src/pub/pub_array.cc
+
 )
 
 set(COMMON_LIBRARIES 	${catkin_LIBRARIES} libCanCmd.so)
