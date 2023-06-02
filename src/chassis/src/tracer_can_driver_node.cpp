@@ -40,8 +40,10 @@ namespace cyberc3
         received_can_frame = can_bridge_ptr_->Read(thiscan);
         if (received_can_frame == 0)
         {
+
           continue;
         }
+
         can_frame_[0] = thiscan.id;
         can_frame_[1] = thiscan.len;
         for (size_t i = 2; i < 10; i++)
@@ -68,8 +70,11 @@ namespace cyberc3
 
     void tracer_can_driver_node::Timer50hzCallback(const ros::TimerEvent &)
     {
-      agv_speed_feedback_.left_speed_mps = tracer_feedback_ptr_.speed;
-      agv_speed_feedback_.right_speed_mps = tracer_feedback_ptr_.speed;
+       v_ = tracer_feedback_ptr_.speed * 0.001;
+       r_ = tracer_feedback_ptr_.rotate * 0.001;
+
+      agv_speed_feedback_.left_speed_mps = v_ - (r_ * d_)  * 0.5;
+      agv_speed_feedback_.right_speed_mps = v_ + (r_ * d_)  * 0.5;
       publish_vehicle_speed_.publish(agv_speed_feedback_);
     }
   } // namespace node

@@ -23,6 +23,10 @@ namespace cyberc3
       ros::Timer timer_50hz_;
 
     private:
+     double v_ = 0;
+     double r_ = 0;
+     double d_ = 0.269;
+
       ros::NodeHandle nh_;
       ros::NodeHandle pnh_;
       cyber_msgs::AGVSpeedFeedback agv_speed_feedback_;

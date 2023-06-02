@@ -10,12 +10,12 @@ namespace cyber_c3
       printf("laikeusbcan open ...\n");
       if (simulink == false)
       {
-        dwDeviceHandle_ = CAN_DeviceOpen(dwType_, dwChannel_, 0);
-        // while ((dwDeviceHandle_ = CAN_DeviceOpen(dwType_, dwChannel_, 0)) == 0)
-        // {
-        //   printf("laikeusbcan0 open deivce0 error\n");
-        //   usleep(1000 * 1000);
-        // }
+        // dwDeviceHandle_ = CAN_DeviceOpen(dwType_, dwChannel_, 0);
+        while ((dwDeviceHandle_ = CAN_DeviceOpen(dwType_, dwChannel_, 0)) == 0)
+        {
+          printf("laikeusbcan0 open deivce0 error\n");
+          usleep(1000 * 1000);
+        }
         printf("laikeusbcan open deivce success!\n");
         /* CAN 通道配置*/
         CAN_InitConfig config0;
@@ -29,12 +29,12 @@ namespace cyber_c3
         config0.dwBtr[1] = 0x1C; // BTR1
         config0.dwBtr[2] = 0;
         config0.dwBtr[3] = 0;
-        CAN_ChannelStart(dwDeviceHandle_, dwChannel_, &config0);
-        // while (CAN_ChannelStart(dwDeviceHandle_, dwChannel_, &config0) !=
-        //        CAN_RESULT_OK)
-        // {
-        //   printf("mPciCAN Start CAN 0 error\n");
-        // }
+        // CAN_ChannelStart(dwDeviceHandle_, dwChannel_, &config0);
+        while (CAN_ChannelStart(dwDeviceHandle_, dwChannel_, &config0) !=
+               CAN_RESULT_OK)
+        {
+          printf("mPciCAN Start CAN 0 error\n");
+        }
       }
     };
 

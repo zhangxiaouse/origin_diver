@@ -23,7 +23,7 @@ namespace cyber_c3
       std::mutex write_mutex;
       DWORD dwDeviceHandle_;
       DWORD dwChannel_ = 0;
-      DWORD dwType_ = ACUSB_132B;
+      DWORD dwType_ = LCUSB_132B;
     };
 
   } // namespace can_bridge
