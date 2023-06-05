@@ -12,6 +12,7 @@ namespace cyberc3
       tracer_ptr_ = std::make_shared<cyberc3::vehicle::tracer>();
       array_pub_ptr_ = std::make_shared<cyberc3::pub::arrayPub>(nh_, "/tracer/can_data", 1);
       publish_vehicle_speed_ = nh_.advertise<cyber_msgs::AGVSpeedFeedback>("/tracer/speedback", 1);
+      publish_vehicle_speed_4_lidarlocalization = nh_.advertise<cyber_msgs::SpeedFeedbackDiff>("/speed_feedback", 1);
 
       subscriber_agv_speed_ = nh_.subscribe("/agv/speedcmd", 1, &tracer_can_driver_node::speed_msg_callback, this);
       timer_50hz_ = nh_.createTimer(ros::Duration(0.02), &tracer_can_driver_node::Timer50hzCallback, this);
@@ -78,11 +79,15 @@ namespace cyberc3
       publish_vehicle_speed_.publish(agv_speed_feedback_);
       speed_feedback_agv_.speed_left_cmps = agv_speed_feedback_.left_speed_mps * 100;
       speed_feedback_agv_.speed_right_cmps = agv_speed_feedback_.right_speed_mps * 100;
+      speed_feedback_agv_.speed_cmps = tracer_feedback_ptr_.speed * 0.1;
+      speed_feedback_agv_.angular_velocity =  tracer_feedback_ptr_.rotate * 0.001;
       publish_vehicle_speed_4_lidarlocalization.publish(speed_feedback_agv_);
       // 将上层控制的速度转向指令信息通过can发布出去
       cyberc3::basic::can CanData;
+      if(tracer_feedback_ptr_.control_mode == 1){
       tracer_ptr_->setSteerSpeed(tracer_feedback_ptr_, tracer_command_ptr_, CanData);
       can_bridge_ptr_->Write(CanData);
+      }
     }
   } // namespace node
 } // namespace cyberc3
