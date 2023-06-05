@@ -76,7 +76,9 @@ namespace cyberc3
       agv_speed_feedback_.left_speed_mps = v_ - (r_ * d_) * 0.5;
       agv_speed_feedback_.right_speed_mps = v_ + (r_ * d_) * 0.5;
       publish_vehicle_speed_.publish(agv_speed_feedback_);
-
+      speed_feedback_agv_.speed_left_cmps = agv_speed_feedback_.left_speed_mps * 100;
+      speed_feedback_agv_.speed_right_cmps = agv_speed_feedback_.right_speed_mps * 100;
+      publish_vehicle_speed_4_lidarlocalization.publish(speed_feedback_agv_);
       // 将上层控制的速度转向指令信息通过can发布出去
       cyberc3::basic::can CanData;
       tracer_ptr_->setSteerSpeed(tracer_feedback_ptr_, tracer_command_ptr_, CanData);

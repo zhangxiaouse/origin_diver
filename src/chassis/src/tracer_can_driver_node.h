@@ -1,6 +1,7 @@
 #include "tracer/tracer.h"
 #include "cyber_msgs/CanFrame.h"
 #include "cyber_msgs/AGVSpeedFeedback.h"
+#include "cyber_msgs/SpeedFeedbackAGV.h"
 #include "cyber_msgs/AGVSpeedCmd.h"
 #include "lcan/lcan.h"
 #include "std_msgs/Int16.h"
@@ -33,8 +34,10 @@ namespace cyberc3
       ros::NodeHandle nh_;
       ros::NodeHandle pnh_;
       cyber_msgs::AGVSpeedFeedback agv_speed_feedback_;
+      cyber_msgs::SpeedFeedbackAGV speed_feedback_agv_;
       cyber_msgs::AGVSpeedCmd agv_speed_cmd_;
       ros::Publisher publish_vehicle_speed_;
+      ros::Publisher publish_vehicle_speed_4_lidarlocalization;
       ros::Subscriber subscriber_agv_speed_;
 
       double left_speed = 0;
