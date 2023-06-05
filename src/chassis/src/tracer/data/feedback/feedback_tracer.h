@@ -9,6 +9,8 @@ namespace cyberc3
         private:
             /* data */
         public:
+            bool is_init = false;
+            char control_mode = 0;
             signed int left_speed = 0;
             signed int right_speed = 0;
             signed int speed = 0;

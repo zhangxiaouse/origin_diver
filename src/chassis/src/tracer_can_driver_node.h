@@ -8,6 +8,8 @@
 #include <ros/ros.h>
 #include <thread>
 #include "pub/pub_array.h"
+#include "tracer/data/feedback/feedback_tracer.h"
+#include "tracer/data/command/tracer_command.h"
 
 namespace cyberc3
 {
@@ -19,13 +21,14 @@ namespace cyberc3
       std::shared_ptr<cyber_c3::can_bridge::interface> can_bridge_ptr_;
       std::shared_ptr<cyberc3::vehicle::tracer> tracer_ptr_;
       cyberc3::feedback::tracer tracer_feedback_ptr_;
+      cyberc3::command::tracer_command tracer_command_ptr_;
       std::shared_ptr<cyberc3::pub::arrayPub> array_pub_ptr_;
       ros::Timer timer_50hz_;
 
     private:
-     double v_ = 0;
-     double r_ = 0;
-     double d_ = 0.269;
+      double v_ = 0;
+      double r_ = 0;
+      double d_ = 0.269;
 
       ros::NodeHandle nh_;
       ros::NodeHandle pnh_;

@@ -19,8 +19,8 @@ namespace cyberc3
 
     void tracer_can_driver_node::speed_msg_callback(const cyber_msgs::AGVSpeedCmd msg)
     {
-      left_speed = msg.left_cmd_mps;
-      right_speed = msg.right_cmd_mps;
+      tracer_command_ptr_.left_speed_mps = msg.left_cmd_mps;
+      tracer_command_ptr_.right_speed_mps = msg.right_cmd_mps;
     }
 
     void tracer_can_driver_node::receive()
@@ -70,12 +70,17 @@ namespace cyberc3
 
     void tracer_can_driver_node::Timer50hzCallback(const ros::TimerEvent &)
     {
-       v_ = tracer_feedback_ptr_.speed * 0.001;
-       r_ = tracer_feedback_ptr_.rotate * 0.001;
-
-      agv_speed_feedback_.left_speed_mps = v_ - (r_ * d_)  * 0.5;
-      agv_speed_feedback_.right_speed_mps = v_ + (r_ * d_)  * 0.5;
+      // 将底层车辆的速度发布出去
+      v_ = tracer_feedback_ptr_.speed * 0.001;
+      r_ = tracer_feedback_ptr_.rotate * 0.001;
+      agv_speed_feedback_.left_speed_mps = v_ - (r_ * d_) * 0.5;
+      agv_speed_feedback_.right_speed_mps = v_ + (r_ * d_) * 0.5;
       publish_vehicle_speed_.publish(agv_speed_feedback_);
+
+      // 将上层控制的速度转向指令信息通过can发布出去
+      cyberc3::basic::can CanData;
+      tracer_ptr_->setSteerSpeed(tracer_feedback_ptr_, tracer_command_ptr_, CanData);
+      can_bridge_ptr_->Write(CanData);
     }
   } // namespace node
 } // namespace cyberc3
