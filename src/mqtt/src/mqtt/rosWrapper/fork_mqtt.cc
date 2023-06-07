@@ -14,6 +14,7 @@ namespace cyberc3
       pub_work_positions_ = nh_.advertise<std_msgs::Int8MultiArray>("/mqtt/fork/positions", 1);
       pub_work_unfork_positions_ = nh_.advertise<std_msgs::Int8MultiArray>("/mqtt/fork/unfork_positions", 1);
       pub_upload_task_ = nh_.advertise<std_msgs::Bool>("/mqtt/fork/upload_task", 1);
+      pub_test_task_ = nh_.advertise<std_msgs::Int8>("/start_pub", 1);
       sub_upload_task_done = nh_.subscribe("/mqtt/fork/upload_task/done", 5, &ForkMqtt::uploadTaskCompleteCallback, this);
       sub_stager_mode = nh_.subscribe("/stager_mode", 5, &ForkMqtt::stagerModeCallback, this);
       //  nh_->advertise<std_msgs::Int8>("/stager_mode", 1);
@@ -59,6 +60,13 @@ namespace cyberc3
     void ForkMqtt::timer_1hz_callback(const ros::TimerEvent &)
     {
       std_msgs::Int8 mqtt_cmd_data_;
+      std_msgs::Int8 start_pub_data_;
+      if (iot_client->get_from_() != -1)
+      {
+        start_pub_data_.data = iot_client->get_from_();
+        pub_test_task_.publish(start_pub_data_);
+        iot_client->reset_from_();
+      }
       // 从mqtt读取数据 发布到ros
       if (iot_client->getLatestCmdData() != "0")
       {

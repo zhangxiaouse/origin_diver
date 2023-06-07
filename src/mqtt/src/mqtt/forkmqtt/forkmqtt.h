@@ -83,7 +83,7 @@ namespace cyberc3
       {
         return cmd_from_;
       }
-      int resett_from_()
+      int reset_from_()
       {
         cmd_from_ = -1;
       }
@@ -92,7 +92,7 @@ namespace cyberc3
       {
         return cmd_to_;
       }
-      int resett_to_()
+      int reset_to_()
       {
         cmd_to_ = -1;
       }
