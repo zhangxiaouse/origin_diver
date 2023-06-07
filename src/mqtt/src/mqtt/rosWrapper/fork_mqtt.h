@@ -40,6 +40,7 @@ namespace cyberc3
       ros::Publisher pub_work_unfork_positions_;
       ros::Publisher pub_upload_task_;
       ros::Publisher pub_test_task_;
+      ros::Publisher pub_request_auto_;
 
       ros::Subscriber sub_upload_task_done;
       ros::Subscriber sub_stager_mode;

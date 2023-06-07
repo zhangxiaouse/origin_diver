@@ -36,33 +36,23 @@ namespace cyberc3
       tracer_cmd.speed_mmps = (left_speed_mps_ + right_speed_mps_) * 500;
       tracer_cmd.rotate_0p001radps = (right_speed_mps_ - left_speed_mps_) * 1000 / 0.269;
 
-      if (car_state.control_mode == 0x01)
+      if (car_state.is_init == false)
       {
-        if (car_state.is_init == false)
-        {
-          CanData.id = 0x421;
-          CanData.len = 1;
-          CanData.data[0] = 1;
-          car_state.is_init = true;
-        }
-        else
-        {
-          CanData.id = 0x111;
-          CanData.len = 8;
-          CanData.data[0] = static_cast<uint8_t>(static_cast<int16_t>(tracer_cmd.speed_mmps) >> 8);
-          CanData.data[1] = static_cast<uint8_t>(static_cast<int16_t>(tracer_cmd.speed_mmps));
-          CanData.data[2] = static_cast<uint8_t>(static_cast<int16_t>(tracer_cmd.rotate_0p001radps) >> 8);
-          CanData.data[3] = static_cast<uint8_t>(static_cast<int16_t>(tracer_cmd.rotate_0p001radps));
-          CanData.data[4] = 0;
-          CanData.data[5] = 0;
-          CanData.data[6] = 0x00;
-          CanData.data[7] = 0x00;
-        }
+        CanData.id = 0x421;
+        CanData.len = 1;
+        CanData.data[0] = 1;
+        car_state.is_init = true;
       }
-      else
-      {
-        car_state.is_init = false;
-      }
+      CanData.id = 0x111;
+      CanData.len = 8;
+      CanData.data[0] = static_cast<uint8_t>(static_cast<int16_t>(tracer_cmd.speed_mmps) >> 8);
+      CanData.data[1] = static_cast<uint8_t>(static_cast<int16_t>(tracer_cmd.speed_mmps));
+      CanData.data[2] = static_cast<uint8_t>(static_cast<int16_t>(tracer_cmd.rotate_0p001radps) >> 8);
+      CanData.data[3] = static_cast<uint8_t>(static_cast<int16_t>(tracer_cmd.rotate_0p001radps));
+      CanData.data[4] = 0;
+      CanData.data[5] = 0;
+      CanData.data[6] = 0x00;
+      CanData.data[7] = 0x00;
     }
 
   } // namespace vehicle

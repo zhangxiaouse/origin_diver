@@ -7,6 +7,7 @@
 #include "lcan/lcan.h"
 #include "std_msgs/Int16.h"
 #include "std_msgs/Int32.h"
+#include "std_msgs/Bool.h"
 #include <ros/ros.h>
 #include <thread>
 #include "pub/pub_array.h"
@@ -32,7 +33,7 @@ namespace cyberc3
       double v_ = 0;
       double r_ = 0;
       double d_ = 0.269;
-
+      bool is_auto_ = false;
       ros::NodeHandle nh_;
       ros::NodeHandle pnh_;
       cyber_msgs::AGVSpeedFeedback agv_speed_feedback_;
@@ -41,6 +42,7 @@ namespace cyberc3
       ros::Publisher publish_vehicle_speed_;
       ros::Publisher publish_vehicle_speed_4_lidarlocalization;
       ros::Subscriber subscriber_agv_speed_;
+      ros::Subscriber subscriber_web_cmd_;
 
       double left_speed = 0;
       double right_speed = 0;
@@ -51,6 +53,7 @@ namespace cyberc3
       void receive();
       void Timer50hzCallback(const ros::TimerEvent &);
       void speed_msg_callback(const cyber_msgs::AGVSpeedCmd msg);
+      void web_cmd_msg_callback(const std_msgs::Bool msg);
     };
   }
 }

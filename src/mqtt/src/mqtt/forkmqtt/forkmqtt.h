@@ -24,6 +24,9 @@ namespace cyberc3
       int need_fork_position = -1;
       int cmd_from_ = -1;
       int cmd_to_ = -1;
+      int web_publish_cmd_auto_ = 0;
+      int web_cmd_ = -1;
+      int web_cmd_value_ = -1;
       // 叉车所需要叉取的货物位置
       std::string cmd_ = "0";
       std::string positions_ = "";
@@ -77,6 +80,24 @@ namespace cyberc3
       {
         upload_task_ = false;
         return true;
+      }
+
+      int get_web_cmd_()
+      {
+        return web_cmd_;
+      }
+      int reset_web_cmd_()
+      {
+        web_cmd_ = -1;
+      }
+
+      int get_web_cmd_value_()
+      {
+        return web_cmd_value_;
+      }
+      int reset_web_cmd_value_()
+      {
+        web_cmd_value_ = -1;
       }
 
       int get_from_()

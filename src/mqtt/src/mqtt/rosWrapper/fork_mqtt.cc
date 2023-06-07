@@ -14,6 +14,7 @@ namespace cyberc3
       pub_work_positions_ = nh_.advertise<std_msgs::Int8MultiArray>("/mqtt/fork/positions", 1);
       pub_work_unfork_positions_ = nh_.advertise<std_msgs::Int8MultiArray>("/mqtt/fork/unfork_positions", 1);
       pub_upload_task_ = nh_.advertise<std_msgs::Bool>("/mqtt/fork/upload_task", 1);
+      pub_request_auto_ = nh_.advertise<std_msgs::Bool>("/web/request/auto", 1);
       pub_test_task_ = nh_.advertise<std_msgs::Int8>("/start_pub", 1);
       sub_upload_task_done = nh_.subscribe("/mqtt/fork/upload_task/done", 5, &ForkMqtt::uploadTaskCompleteCallback, this);
       sub_stager_mode = nh_.subscribe("/stager_mode", 5, &ForkMqtt::stagerModeCallback, this);
@@ -26,6 +27,7 @@ namespace cyberc3
       // iot_client = new mqtt_client("fork_mqtt_shawn_test", "192.168.0.151", 1883);
 
       iot_client->subscribe(NULL, "/test");
+      iot_client->subscribe(NULL, "/web/publish/cmd");
       iot_client->subscribe(NULL, "/request_fork_control");
       iot_client->subscribe(NULL, "/tray/respose/arrive/at/00");
       iot_client->subscribe(NULL, "/number_of_goods");
@@ -61,11 +63,18 @@ namespace cyberc3
     {
       std_msgs::Int8 mqtt_cmd_data_;
       std_msgs::Int8 start_pub_data_;
+      std_msgs::Bool web_request_auto_;
       if (iot_client->get_from_() != -1)
       {
         start_pub_data_.data = iot_client->get_from_();
         pub_test_task_.publish(start_pub_data_);
         iot_client->reset_from_();
+      }
+      if (iot_client->get_web_cmd_() == 1)
+      {
+        web_request_auto_.data = iot_client->get_web_cmd_value_();
+        pub_request_auto_.publish(web_request_auto_);
+        iot_client->reset_web_cmd_();
       }
       // 从mqtt读取数据 发布到ros
       if (iot_client->getLatestCmdData() != "0")

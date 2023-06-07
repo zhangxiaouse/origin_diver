@@ -97,6 +97,19 @@ namespace cyberc3
         cmd_from_ = value["from_"].asInt();
         cmd_to_ = value["to_"].asInt();
       }
+      else if (!strcmp(message->topic, "/web/publish/cmd"))
+      {
+        std::cout << message->topic << std::endl;
+        memset(buf, 0, payload_size * sizeof(char));
+        memcpy(buf, message->payload, MAX_PAYLOAD * sizeof(char));
+        Json::Reader reader;
+        Json::Value value;
+        reader.parse(buf, value);
+        web_cmd_ = value["cmd_"].asInt();
+        std::cout << web_cmd_ << std::endl;
+        web_cmd_value_ = value["value_"].asInt();
+        std::cout << web_cmd_value_ << std::endl;
+      }
       // else if(!strcmp(message->topic, SET_FORK_POSITION))
       //   {
       //     std::cout<<message->topic<<std::endl;
