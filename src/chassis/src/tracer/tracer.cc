@@ -17,7 +17,8 @@ namespace cyberc3
       switch (CanData.id)
       {
       case 0x211:
-        Tracer.control_mode = CanData.data[1];
+        Tracer.control_mode = static_cast<unsigned int>(CanData.data[1]);
+        break;
       case 0x221:
         Tracer.speed = static_cast<int16_t>(CanData.data[0] << 8 | CanData.data[1]);
         Tracer.rotate = static_cast<int16_t>(CanData.data[2] << 8 | CanData.data[3]);
@@ -42,7 +43,7 @@ namespace cyberc3
         CanData.len = 1;
         CanData.data[0] = 1;
         car_state.is_init = true;
-      }
+      }else{
       CanData.id = 0x111;
       CanData.len = 8;
       CanData.data[0] = static_cast<uint8_t>(static_cast<int16_t>(tracer_cmd.speed_mmps) >> 8);
@@ -53,6 +54,8 @@ namespace cyberc3
       CanData.data[5] = 0;
       CanData.data[6] = 0x00;
       CanData.data[7] = 0x00;
+      }
+
     }
 
   } // namespace vehicle
