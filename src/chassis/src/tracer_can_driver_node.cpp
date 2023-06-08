@@ -99,7 +99,7 @@ namespace cyberc3
       cyberc3::basic::can CanData;
       if (is_auto_ == true)
       {
-        // std::cout<<"is_auto true"<<std::endl;
+        std::cout<<"is_auto true"<<std::endl;
         tracer_ptr_->setSteerSpeed(tracer_feedback_ptr_, tracer_command_ptr_, CanData);
         can_bridge_ptr_->Write(CanData);
       }
