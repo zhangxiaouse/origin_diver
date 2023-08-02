@@ -152,25 +152,14 @@ if(ROS_EDITION STREQUAL "ROS1")
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-
   install(DIRECTORY config/
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
-  )
-
+          DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config)
 
   install(DIRECTORY launch_ROS1/
           DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch_ROS1)
 
-<<<<<<< Updated upstream
   install(DIRECTORY config/
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
-  )
-  #---------------------------------------------------------------------------------------
-=======
-  # ---------------------------------------------------------------------------------------
->>>>>>> Stashed changes
-  # end of CMakeList.txt
-  # ---------------------------------------------------------------------------------------
+          DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config)
 
 else(ROS_EDITION STREQUAL "ROS2")
 
