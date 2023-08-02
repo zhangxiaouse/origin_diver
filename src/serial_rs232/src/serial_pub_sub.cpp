@@ -22,7 +22,7 @@ std::string localization_topic = "/localization/estimation_odom";
 double wheel_distance = 0.64;
 
 class SerialPort {
-public:
+ public:
   SerialPort(const std::string &port, int baudrate)
       : port_(port), baudrate_(baudrate) {
     ser_.setPort(port_);
@@ -59,7 +59,7 @@ public:
     ser_.write(buffer.data(), buffer.size());
   }
 
-private:
+ private:
   serial::Serial ser_;
   std::string port_;
   int baudrate_;
@@ -171,23 +171,19 @@ void reveive() {
                           read_buffer.begin() + TARGET_LENGTH);
         if (((parse_speed_data[18] << 8) | parse_speed_data[19]) ==
             crc16(parse_speed_data.data(), 18)) {
-
           std::lock_guard<std::mutex> lock(dataSub_mtx);
 
           dataSub.localization_num =
               (uint16_t)((parse_speed_data[1] << 8) | parse_speed_data[2]);
-          dataSub.speed_left =
-              (int32_t)((parse_speed_data[3] << 24) |
-                        (parse_speed_data[4] << 16) |
-                        (parse_speed_data[5] << 8) | parse_speed_data[6]);
-          dataSub.speed_right =
-              (int32_t)((parse_speed_data[7] << 24) |
-                        (parse_speed_data[8] << 16) |
-                        (parse_speed_data[9] << 8) | parse_speed_data[10]);
-          dataSub.timestamp =
-              (int32_t)((parse_speed_data[11] << 24) |
-                        (parse_speed_data[12] << 16) |
-                        (parse_speed_data[13] << 8) | parse_speed_data[14]);
+          dataSub.speed_left = (int32_t)(
+              (parse_speed_data[3] << 24) | (parse_speed_data[4] << 16) |
+              (parse_speed_data[5] << 8) | parse_speed_data[6]);
+          dataSub.speed_right = (int32_t)(
+              (parse_speed_data[7] << 24) | (parse_speed_data[8] << 16) |
+              (parse_speed_data[9] << 8) | parse_speed_data[10]);
+          dataSub.timestamp = (int32_t)(
+              (parse_speed_data[11] << 24) | (parse_speed_data[12] << 16) |
+              (parse_speed_data[13] << 8) | parse_speed_data[14]);
           read_buffer.clear();
         } else {
           ROS_WARN("Invalid Data, Something went wrong...");

@@ -12,8 +12,8 @@ find_package(
              nav_msgs
              sensor_msgs
              std_msgs
-             cyber_msgs
-             tf)
+             tf
+             cyber_msgs)
 
 catkin_package(
   CATKIN_DEPENDS
@@ -25,6 +25,7 @@ catkin_package(
   serial
   std_msgs
   tf
+  cyber_msgs
   DEPENDS
   LIBRARIES)
 
