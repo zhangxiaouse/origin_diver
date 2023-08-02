@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="chassis" name="tracer" type="tracer" output="screen">
+	</node>
+</launch>

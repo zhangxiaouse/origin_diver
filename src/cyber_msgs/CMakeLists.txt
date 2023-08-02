@@ -26,7 +26,10 @@ add_message_files(
   ButtonState.msg
   CanFrame.msg
   arm_action.msg
-  SpeedFeedbackDiff.msg)
+  SpeedFeedbackDiff.msg
+  AGVSpeedFeedback.msg
+  AGVSpeedCmd.msg
+  )
 
 # Generate added messages and services with any dependencies listed here
 generate_messages(DEPENDENCIES geometry_msgs sensor_msgs std_msgs)
