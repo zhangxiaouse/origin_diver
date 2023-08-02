@@ -90,6 +90,8 @@ namespace cyberc3
       agv_speed_feedback_.left_speed_mps = v_ - (r_ * d_) * 0.5;
       agv_speed_feedback_.right_speed_mps = v_ + (r_ * d_) * 0.5;
       publish_vehicle_speed_.publish(agv_speed_feedback_);
+
+      speed_feedback_agv_.header.stamp =ros::Time::now();
       speed_feedback_agv_.speed_left_cmps = agv_speed_feedback_.left_speed_mps * 100;
       speed_feedback_agv_.speed_right_cmps = agv_speed_feedback_.right_speed_mps * 100;
       speed_feedback_agv_.speed_cmps = tracer_feedback_ptr_.speed * 0.1;
