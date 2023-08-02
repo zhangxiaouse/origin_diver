@@ -90,6 +90,8 @@ namespace cyberc3
       agv_speed_feedback_.left_speed_mps = v_ - (r_ * d_) * 0.5;
       agv_speed_feedback_.right_speed_mps = v_ + (r_ * d_) * 0.5;
       publish_vehicle_speed_.publish(agv_speed_feedback_);
+
+      speed_feedback_agv_.header.stamp =ros::Time::now();
       speed_feedback_agv_.speed_left_cmps = agv_speed_feedback_.left_speed_mps * 100;
       speed_feedback_agv_.speed_right_cmps = agv_speed_feedback_.right_speed_mps * 100;
       speed_feedback_agv_.speed_cmps = tracer_feedback_ptr_.speed * 0.1;
@@ -99,7 +101,7 @@ namespace cyberc3
       cyberc3::basic::can CanData;
       if (is_auto_ == true)
       {
-        // std::cout<<"is_auto true"<<std::endl;
+        std::cout<<"is_auto true"<<std::endl;
         tracer_ptr_->setSteerSpeed(tracer_feedback_ptr_, tracer_command_ptr_, CanData);
         can_bridge_ptr_->Write(CanData);
       }
