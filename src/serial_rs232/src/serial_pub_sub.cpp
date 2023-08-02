@@ -1,20 +1,12 @@
-/**
- * @ Author: Tong Yao
- * @ Create Time: 2022-11-03 10:06:53
- * @ Modified by: Tong Yao
- * @ Modified time: 2022-11-08 16:58:25
- * @ Description: agv communication by rs232.
- */
 #include "crcLib/crcLib.h"
 
-// #include "cyber_msgs/SpeedFeedback.h"
+#include "serial/serial.h"
+
 #include "cyber_msgs/LocalizationEstimate.h"
-#include "cyber_msgs/SpeedFeedbackAGV.h"
+#include "cyber_msgs/SpeedFeedbackDiff.h"
 #include "nav_msgs/Odometry.h"
 #include "ros/ros.h"
 #include "ros/time.h"
-#include "sensor_msgs/Imu.h"
-#include "serial/serial.h"
 #include "tf/transform_datatypes.h"
 
 #include <algorithm>
@@ -24,10 +16,8 @@
 #include <vector>
 
 ros::Publisher pubSpeed;
-ros::Publisher pubImu;
 
 std::string speed_topic = "/speed_feedback";
-std::string imu_topic = "/imu_virtual";
 std::string localization_topic = "/localization/estimation_odom";
 double wheel_distance = 0.64;
 
@@ -208,14 +198,6 @@ void reveive() {
   }
 }
 
-// void speed_data_tomsg(){
-//     speed_data_msg.header.stamp = ros::T               ros::ok() ime::now();
-//     speed_data_msg.speed_cmps = (dataSub.speed_left +
-//     dataSub.speed_right)
-//     * 0.1 * 0.5; speed_data_msg.speed_kmph = (dataSub.speed_left +
-//     dataSub.speed_right) * 0.001 * 0.5 * 3.6;
-// }
-
 void send() {
   while (ros::ok()) {
     static double last_time = ros::Time::now().toSec();
@@ -234,20 +216,15 @@ void send() {
 
     {
       std::lock_guard<std::mutex> lock(dataSub_mtx);
-      cyber_msgs::SpeedFeedbackAGV speed_data_msg;
+      cyber_msgs::SpeedFeedbackDiff speed_data_msg;
       speed_data_msg.header.stamp = ros::Time::now();
       speed_data_msg.speed_left_cmps = dataSub.speed_left * 0.1;
       speed_data_msg.speed_right_cmps = dataSub.speed_right * 0.1;
+      speed_data_msg.angular_velocity =
+          (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
       pubSpeed.publish(speed_data_msg);
       std::cout << " publish ros data [" << dataSub.speed_left << ", "
                 << dataSub.speed_right << "] " << std::endl;
-
-      sensor_msgs::Imu imu_data_msg;
-      imu_data_msg.header.stamp = ros::Time::now();
-      imu_data_msg.header.frame_id = "base_link";
-      imu_data_msg.angular_velocity.z =
-          (dataSub.speed_right - dataSub.speed_left) * 0.001 / wheel_distance;
-      pubImu.publish(imu_data_msg);
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -263,14 +240,13 @@ int main(int argc, char *argv[]) {
   n.param("serial_port", serial_port, serial_port);
   n.param("baudrate", baudrate, baudrate);
   n.param("speed_topic", speed_topic, speed_topic);
-  n.param("imu_topic", imu_topic, imu_topic);
   n.param("localization_topic", localization_topic, localization_topic);
   n.param("wheel_distance", wheel_distance, wheel_distance);
 
   std::cout << serial_port << std::endl;
 
-  pubSpeed = n.advertise<cyber_msgs::SpeedFeedbackAGV>(speed_topic, 100);
-  pubImu = n.advertise<sensor_msgs::Imu>(imu_topic, 100);
+  pubSpeed = n.advertise<cyber_msgs::SpeedFeedbackDiff>(speed_topic, 100);
+
   auto sublocalization =
       n.subscribe(localization_topic, 1, localizationCallback);
 

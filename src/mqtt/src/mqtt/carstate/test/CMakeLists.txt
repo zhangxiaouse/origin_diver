@@ -1,0 +1,24 @@
+add_compile_options(-std=c++11)
+add_definitions(-std=c++11)
+
+add_executable(testcarstate
+              ../carstate_test.cpp
+              ../carstate.cpp
+              ../event/events.cpp
+              ../state/Manual/manual.cpp 
+              ../state/Manual/prepare.cpp
+              ../state/Automatic/automatic.cpp
+              ../state/Automatic/normal/normal.cpp
+              ../state/Automatic/normal/preparedone.cpp
+              ../state/Automatic/normal/arrivestation.cpp
+              ../state/Automatic/normal/normalrun.cpp
+              ../state/Automatic/normal/obstaclestop.cpp
+              ../state/Automatic/normal/webstop.cpp
+              ../state/Automatic/normal/localizationstop.cpp
+              ../state/Automatic/normal/electricfencestop.cpp
+              ../state/Automatic/error/error.cpp
+              ../state/Automatic/error/hardwarefault.cpp
+              )
+ 
+target_link_libraries(testcarstate
+)
