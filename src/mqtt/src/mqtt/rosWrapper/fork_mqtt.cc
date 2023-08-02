@@ -8,6 +8,8 @@ namespace cyberc3
     ForkMqtt::ForkMqtt(ros::NodeHandle nh) : nh_(nh)
     {
       nh_.param<string>("vin", vin_, "6d083020404070");
+      nh_.param<string>("Line", line_, "0001");
+      std::cout << line_ << std::endl;
       nh_.param<string>("user_name", user_name_, "test");
       nh_.param<string>("user_pass", user_pass_, "123456");
       pub_cmd_from_mqtt = nh_.advertise<std_msgs::Int8>("/mqtt/cmd", 1);
@@ -16,6 +18,8 @@ namespace cyberc3
       pub_upload_task_ = nh_.advertise<std_msgs::Bool>("/mqtt/fork/upload_task", 1);
       pub_request_auto_ = nh_.advertise<std_msgs::Bool>("/web/request/auto", 1);
       pub_test_task_ = nh_.advertise<std_msgs::Int8>("/start_pub", 1);
+      pub_planning_task_id_ = nh_.advertise<std_msgs::Int32>("/planning/task_id", 1); // 设置任务点 to planning
+
       sub_upload_task_done = nh_.subscribe("/mqtt/fork/upload_task/done", 5, &ForkMqtt::uploadTaskCompleteCallback, this);
       sub_stager_mode = nh_.subscribe("/stager_mode", 5, &ForkMqtt::stagerModeCallback, this);
       //  nh_->advertise<std_msgs::Int8>("/stager_mode", 1);
@@ -23,7 +27,7 @@ namespace cyberc3
 
       // /chassis/body_status_feedback
       mosqpp::lib_init();
-      iot_client = new mqtt_client("fork_mqtt_shawn_test", "192.168.0.127", 1883);
+      iot_client = new mqtt_client("fork_mqtt_shawn_test", "192.168.0.129", 1883);
       // iot_client = new mqtt_client("fork_mqtt_shawn_test", "192.168.0.151", 1883);
 
       iot_client->subscribe(NULL, "/test");
@@ -32,6 +36,9 @@ namespace cyberc3
       iot_client->subscribe(NULL, "/tray/respose/arrive/at/00");
       iot_client->subscribe(NULL, "/number_of_goods");
       iot_client->subscribe(NULL, "/tray/request/upload/goods");
+      /// 0001/web/publish/dispatch/#为了接收调度系统的任务
+      std::string task_topic = "/0001/web/publish/dispatch/";
+      iot_client->subscribe(NULL, task_topic.c_str());
       timer_1hz_ = nh_.createTimer(ros::Duration(1), &ForkMqtt::timer_1hz_callback, this);
       rc = iot_client->loop();
     }
@@ -136,6 +143,22 @@ namespace cyberc3
 
         pub_work_positions_.publish(data1_);
         iot_client->reset_need_fork_position();
+      }
+
+      if (iot_client->getDispatchData(lineName, vehicleUUid, stationID) == true)
+      {
+        if (vin_ == vehicleUUid && line_ == lineName)
+        {
+          std_msgs::Int32 sl_station;
+          sl_station.data = stationID;
+          pub_planning_task_id_.publish(sl_station);
+          iot_client->resetDispatchData();
+          std::cout << "lineName and vehicleUUid is match" << std::endl;
+        }
+        else
+        {
+          std::cout << "lineName or vehicleUUid is not match" << std::endl;
+        }
       }
 
       // pub_work_unfork_positions_

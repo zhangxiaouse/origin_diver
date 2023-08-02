@@ -110,6 +110,21 @@ namespace cyberc3
         web_cmd_value_ = value["value_"].asInt();
         std::cout << web_cmd_value_ << std::endl;
       }
+      else if (!strcmp(message->topic, "/0001/web/publish/dispatch/"))
+      {
+        std::cout << message->topic << std::endl;
+        memset(buf, 0, payload_size * sizeof(char));
+        memcpy(buf, message->payload, MAX_PAYLOAD * sizeof(char));
+        Json::Reader reader;
+        Json::Value value;
+        reader.parse(buf, value);
+        selectedLine_ = value["selectedLine_"].asString();
+        selectedVehicle_ = value["selectedVehicle_"].asString();
+        std::cout << selectedLine_ << std::endl;
+        std::cout << selectedVehicle_ << std::endl;
+        selectedStation_ = value["selectedStation_"].asInt();
+        std::cout << selectedStation_ << std::endl;
+      }
       // else if(!strcmp(message->topic, SET_FORK_POSITION))
       //   {
       //     std::cout<<message->topic<<std::endl;

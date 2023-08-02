@@ -8,6 +8,7 @@
 #include <std_msgs/Int8MultiArray.h>
 #include <std_msgs/Bool.h>
 #include "cyber_msgs/body_status_feedback.h"
+#include <std_msgs/Int32.h>
 
 using namespace std;
 
@@ -22,8 +23,12 @@ namespace cyberc3
       double count;
       int stager_mode_;
       int is_auto = 0;
+      std::string lineName = "";
+      std::string vehicleUUid = "";
+      int stationID = -1;
       std::string user_name_ = "";
       std::string vin_ = "";
+      std::string line_ = "";
       std::string user_pass_ = "";
       ros::NodeHandle nh_;
       ros::Timer timer_1hz_;
@@ -41,6 +46,7 @@ namespace cyberc3
       ros::Publisher pub_upload_task_;
       ros::Publisher pub_test_task_;
       ros::Publisher pub_request_auto_;
+      ros::Publisher pub_planning_task_id_;
 
       ros::Subscriber sub_upload_task_done;
       ros::Subscriber sub_stager_mode;

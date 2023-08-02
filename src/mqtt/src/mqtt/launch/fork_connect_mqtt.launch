@@ -1,7 +1,7 @@
 <launch>
     <node pkg = "cyberc3_mqtt" type = "fork_mqtt_main_node" name="fork_mqtt_main_node" output="screen">
         <param name="Id" value = "123" type="string" /><!--mqtt系统车辆辨别代码，是否需要设置，咨询南方智运-->
-        <param name="Vin" value = "123" type="string" /><!--当前车辆编码，必须设置,,LK6ADAE28LB200439:shanghai ceshi che -->
-        <param name="Line" value = "123" type="string" /><!--车辆运行路ros线id-->
+        <param name="vin" value = "202307240001" type="string" /><!--当前车辆编码，必须设置,,LK6ADAE28LB200439:shanghai ceshi che -->
+        <param name="Line" value = "发动机组装路线" type="string" /><!--车辆运行路ros线id-->
     </node>
 </launch>
