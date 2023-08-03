@@ -27,6 +27,10 @@ namespace cyberc3
       int web_publish_cmd_auto_ = 0;
       int web_cmd_ = -1;
       int web_cmd_value_ = -1;
+
+      std::string selectedLine_ = "";
+      std::string selectedVehicle_ = "";
+      int selectedStation_ = -1;
       // 叉车所需要叉取的货物位置
       std::string cmd_ = "0";
       std::string positions_ = "";
@@ -41,6 +45,26 @@ namespace cyberc3
       mqtt_client(const char *id, const char *host, int port);
       ~mqtt_client();
 
+      bool getDispatchData(std::string &line, std::string &vehicle, int &station)
+      {
+        line = selectedLine_;
+        vehicle = selectedVehicle_;
+        station = selectedStation_;
+        if (line == "" || vehicle == "" || station == -1)
+        {
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+      };
+      void resetDispatchData()
+      {
+        selectedLine_ = "";
+        selectedVehicle_ = "";
+        selectedStation_ = -1;
+      };
       void on_connect(int rc);
       void on_message(const struct mosquitto_message *message);
       void on_subscribe(int mid, int qos_count, const int *granted_qos);
