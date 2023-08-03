@@ -27,7 +27,7 @@ namespace cyberc3
 
       // /chassis/body_status_feedback
       mosqpp::lib_init();
-      iot_client = new mqtt_client("fork_mqtt_shawn_test", "192.168.0.129", 1883);
+      iot_client = new mqtt_client("fork_mqtt_shawn_test", "192.168.2.200", 1883);
       // iot_client = new mqtt_client("fork_mqtt_shawn_test", "192.168.0.151", 1883);
 
       iot_client->subscribe(NULL, "/test");
