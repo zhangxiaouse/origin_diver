@@ -1,3 +1,5 @@
+sudo apt install libmosquittopp-dev
+
 ------
 ### ros-发布:
 1. mqtt节点发布：设置 上料点位置topic，数据范围为 1-14；
