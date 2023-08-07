@@ -3,3 +3,4 @@ devel
 install
 test_data
 .vscode
+.cache
