@@ -2,5 +2,5 @@ build
 devel
 install
 test_data
-.vscode
 .cache
+.vscode

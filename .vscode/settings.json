@@ -1,0 +1,5 @@
+{
+  "ros.distro": "melodic",
+  "ros.rosSetupScript": "${workspaceFolder}/devel/stup.bash",
+  "ros.isolateEnvironment": "false"
+}

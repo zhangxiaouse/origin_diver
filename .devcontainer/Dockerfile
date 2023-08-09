@@ -13,7 +13,7 @@ RUN sed -i 's/http:\/\/archive.ubuntu.com/http:\/\/mirror.sjtu.edu.cn/g' /etc/ap
 RUN sed -i 's/http:\/\/packages.ros.org/http:\/\/mirror.sjtu.edu.cn/g' /etc/apt/sources.list.d/ros1-latest.list
 # Update and install general packages
 RUN apt-get update && apt-get upgrade -y\
-  && apt-get install -q -y openssh-client vim bash-completion tmux gdb wget
+  && apt-get install -q -y openssh-client vim bash-completion tmux gdb wget cmake
 # Update and install gcc-9
 RUN  apt-get update && apt-get install -y software-properties-common && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
   && apt-get update  && apt-get install -y gcc-9 g++-9 build-essential
@@ -47,7 +47,7 @@ RUN git clone https://github.com/mrpt-ros-pkg/mrpt_msgs.git --branch 0.1.23 --si
 RUN git clone https://github.com/mrpt-ros-pkg/mrpt_bridge.git --branch 0.1.25 --single-branch --depth 1
 WORKDIR ..
 RUN . /opt/ros/melodic/setup.sh && catkin_make -DCMAKE_INSTALL_PREFIX=/opt/ros/melodic install
-# livox SDK
+# livox-SDK1
 WORKDIR /home/${USERNAME}/third_party
 RUN git clone https://github.com/Livox-SDK/Livox-SDK.git --branch v2.3.0 --single-branch  --depth 1
 WORKDIR /home/${USERNAME}/third_party/Livox-SDK/build

@@ -11,7 +11,9 @@ catkin_package()
 include_directories(${catkin_INCLUDE_DIRS})
 link_libraries(${catkin_LIBRARIES})
 
-add_executable(fork_mqtt_main_node fork_mqtt.cc fork_mqtt_main.cpp)
+add_executable(fork_mqtt_main_node rosWrapper/fork_mqtt.cc
+                                   rosWrapper/fork_mqtt_main.cpp
+  )
 
 target_link_libraries(fork_mqtt_main_node ${PROJECT_NAME}_forkmqtt)
 
@@ -20,6 +22,6 @@ install(TARGETS fork_mqtt_main_node
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
-install(DIRECTORY launch/
+install(DIRECTORY rosWrapper/launch/
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
   )

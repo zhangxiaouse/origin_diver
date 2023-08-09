@@ -123,8 +123,8 @@ void send_to_senddata(const Datapub& dataPub, std::vector<unsigned char>& buff) 
   write_be(send_localization_data, 7, dataPub.y_mm, 4);
   write_be(send_localization_data, 11, dataPub.yaw_mm, 2);
   write_be(send_localization_data, 13, dataPub.localization_truth, 1);
-  write_be(send_localization_data, 14, dataPub.command_info, 1);
-  write_be(send_localization_data, 15, dataPub.stop_flag, 1);
+  // write_be(send_localization_data, 14, dataPub.command_info, 1);
+  write_be(send_localization_data, 14, dataPub.stop_flag, 1);
 
   uint16_t temp_16 = crc16(send_localization_data, 18);
   write_be(send_localization_data, 18, temp_16, 2);

@@ -1,0 +1,39 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "catkin_make Debug",
+			"type": "catkin_make",
+			"args": [
+				"--directory",
+				"${workspaceFolder}",
+				"-DCMAKE_BUILD_TYPE=Debug",
+				"-DCMAKE_EXPORT_COMPILE_COMMANDS=True"
+			],
+			"problemMatcher": [
+				"$catkin-gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+		},
+		{
+			"label": "catkin_make Release",
+			"type": "catkin_make",
+			"args": [
+				"--directory",
+				"${workspaceFolder}",
+				"-DCMAKE_BUILD_TYPE=Release",
+				"-DCMAKE_EXPORT_COMPILE_COMMANDS=True"
+			],
+			"problemMatcher": [
+				"$catkin-gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+		}
+	]
+}
