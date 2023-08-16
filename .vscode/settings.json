@@ -1,5 +1,11 @@
 {
   "ros.distro": "melodic",
   "ros.rosSetupScript": "${workspaceFolder}/devel/stup.bash",
-  "ros.isolateEnvironment": "false"
+  "ros.isolateEnvironment": "false",
+  "python.autoComplete.extraPaths": [
+    "/opt/ros/melodic/lib/python2.7/dist-packages"
+  ],
+  "python.analysis.extraPaths": [
+    "/opt/ros/melodic/lib/python2.7/dist-packages"
+  ]
 }

@@ -4,3 +4,4 @@ install
 test_data
 .cache
 .vscode
+src/CMakeLists.txt
