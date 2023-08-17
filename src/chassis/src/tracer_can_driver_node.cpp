@@ -21,6 +21,13 @@ tracer_can_driver_node::tracer_can_driver_node(const ros::NodeHandle &nh,
   subscriber_web_cmd_ =
       nh_.subscribe("/web/request/auto", 1,
                     &tracer_can_driver_node::web_cmd_msg_callback, this);
+subscriber_perception_emergency_ = 
+      nh_.subscribe("/perception/emergency", 1,
+                    &tracer_can_driver_node::perception_cmd_msg_callback, this);
+
+}
+void tracer_can_driver_node::perception_cmd_msg_callback(const std_msgs::Int8 msg) {
+      tracer_feedback_ptr_.emergency = msg.data;
 }
 
 void tracer_can_driver_node::web_cmd_msg_callback(const std_msgs::Bool msg) {

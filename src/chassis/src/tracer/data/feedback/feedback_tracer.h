@@ -17,6 +17,7 @@ namespace cyberc3
             signed int rotate = 0;
             signed int left_odom = 0;
             signed int right_odom = 0;
+            unsigned int  emergency = 0;
         };
 
     } // namespace feedback

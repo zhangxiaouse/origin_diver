@@ -31,9 +31,18 @@ namespace cyberc3
 
     void tracer::setSteerSpeed(cyberc3::feedback::tracer &car_state, cyberc3::command::tracer_command &tracer_cmd, cyberc3::basic::can &CanData)
     {
-
-      double left_speed_mps_ = tracer_cmd.left_speed_mps;
-      double right_speed_mps_ = tracer_cmd.right_speed_mps;
+        double left_speed_mps_ = 0;
+      double right_speed_mps_ =0;
+      if(car_state.emergency == 0){
+          left_speed_mps_ = tracer_cmd.left_speed_mps;
+          right_speed_mps_ = tracer_cmd.right_speed_mps;
+      }else if (car_state.emergency == 1) {
+       left_speed_mps_ = tracer_cmd.left_speed_mps * 0.5;
+          right_speed_mps_ = tracer_cmd.right_speed_mps * 0.5;
+      }else if (car_state.emergency == 2) {
+       left_speed_mps_ = 0;
+          right_speed_mps_ = 0;
+      }
       tracer_cmd.speed_mmps = (left_speed_mps_ + right_speed_mps_) * 500;
       tracer_cmd.rotate_0p001radps = (right_speed_mps_ - left_speed_mps_) * 1000 / 0.269;
 
