@@ -1,5 +1,15 @@
 {
   "ros.distro": "melodic",
   "ros.rosSetupScript": "${workspaceFolder}/devel/stup.bash",
-  "ros.isolateEnvironment": "false"
+  "ros.isolateEnvironment": "false",
+  "python.autoComplete.extraPaths": [
+    "/home/shawn/cc3/driver/devel/lib/python2.7/dist-packages",
+    "/home/shawn/cc3/origin_trajectory/devel/lib/python2.7/dist-packages",
+    "/opt/ros/melodic/lib/python2.7/dist-packages"
+  ],
+  "python.analysis.extraPaths": [
+    "/home/shawn/cc3/driver/devel/lib/python2.7/dist-packages",
+    "/home/shawn/cc3/origin_trajectory/devel/lib/python2.7/dist-packages",
+    "/opt/ros/melodic/lib/python2.7/dist-packages"
+  ]
 }

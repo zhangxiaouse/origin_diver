@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 2.8.0)
 project(cyberc3_mqtt)
 
-# ##############################################################################
-# Compiler Options
-# ##############################################################################
-# set(CMAKE_BUILD_TYPE DEBUG)
-set(CMAKE_CXX_FLAGS_RELEASE " -O3 -Wall")
+#######################################################
+###  Compiler Options
+#######################################################
+#set(CMAKE_BUILD_TYPE DEBUG)
+SET(CMAKE_BUILD_TYPE "DEBUG")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 add_compile_options(-std=c++11)
 add_definitions(-std=c++11)
 
