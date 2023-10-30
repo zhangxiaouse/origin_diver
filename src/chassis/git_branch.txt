@@ -1,0 +1,566 @@
+84990496934383b84c949d82a2c62591ed4ced5dmain8499-dirty84990496934383b84c949d82a2c62591ed4ced5dmain8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+commit 84990496934383b84c949d82a2c62591ed4ced5d
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Aug 17 13:30:24 2023 +0800
+
+    底层驱动增加监控感知避碰话题,进行减速或停车
+
+commit 161c69d971c93888c278f066bed1dfb3fd11874a
+Merge: 409d63d 05df6e3
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Aug 17 12:46:36 2023 +0800
+
+    merge
+
+commit 409d63dc440713e692135c77266cd22a77d7b6e5
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Aug 17 12:44:09 2023 +0800
+
+    merge
+
+commit 05df6e32c7f7f377b3e2f4076b0235b5f023680d
+Author: ztyu <peiwvy@163.com>
+Date:   Wed Aug 16 23:48:16 2023 +0800
+
+    📈
+
+commit eb6b964154c0f933547d8da4d97c366c6efd94c3
+Author: ztyu <peiwvy@163.com>
+Date:   Wed Aug 9 19:52:28 2023 +0800
+
+    🎨 格式完善
+
+commit 0a35de3dd72a956e98040ebeaf5328cf7dd0b72d
+Merge: e05bdcd 837111a
+Author: ztyu <peiwvy@163.com>
+Date:   Mon Aug 7 16:06:42 2023 +0800
+
+    🎨
+
+commit e05bdcde2b5a94b16133ffcd95fbf2e306dc0801
+Author: ztyu <peiwvy@163.com>
+Date:   Mon Aug 7 16:03:46 2023 +0800
+
+    rename
+
+commit 688fa8b754823ea53c5be8d60b3155b30d51aebe
+Author: ztyu <peiwvy@163.com>
+Date:   Mon Aug 7 16:03:06 2023 +0800
+
+    add perception stop
+
+commit 837111ac913709589e00d72f6982398901b1c69b
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Mon Aug 7 13:56:45 2023 +0800
+
+    adjust gitignore
+
+commit 8d1bcfccd7b2924b30dde0ed56454e4d99dfe583
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Mon Aug 7 11:02:56 2023 +0800
+
+     debug fix : add cyberc3_mqtt install file
+
+commit 359dd2074fb761ac7d34c4db7827df9d5c00195d
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Mon Aug 7 10:54:38 2023 +0800
+
+     debug fix : add cyberc3_mqtt install file
+
+commit 2591163c42fd1398d2e67a3150a87cdfd996f4e0
+Author: ztyu <peiwvy@163.com>
+Date:   Sat Aug 5 14:51:45 2023 +0800
+
+    🎨 结构修改
+
+commit 8932986056852fc3c673b5bc66d4cbc6eb00a0a9
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Fri Aug 4 11:16:00 2023 +0800
+
+    add cyberc3_mqtt installed
+
+commit d496d2dbfc8aad4a04383082da25d5609406f503
+Author: ztyu <peiwvy@163.com>
+Date:   Thu Aug 3 22:23:03 2023 +0800
+
+    close livox rviz
+
+commit a8eb96247f738a9fa3c5888b4550fe96186cf008
+Author: ztyu <peiwvy@163.com>
+Date:   Thu Aug 3 22:18:30 2023 +0800
+
+    little fix
+
+commit 0cb9cb44320ccc97aacfe7b529ee0f900acabfae
+Merge: 9853dc9 6634227
+Author: ztyu <peiwvy@163.com>
+Date:   Thu Aug 3 22:16:47 2023 +0800
+
+    Merge remote-tracking branch 'origin/yumain' into main
+
+commit 9853dc98c26feedb6a3ec55bdef821fa9a517a9f
+Author: ztyu <peiwvy@163.com>
+Date:   Thu Aug 3 22:16:29 2023 +0800
+
+    🐛 bug fix
+
+commit 663422755ec51506b36ed26973f60d9a09162f37
+Merge: 1495d7c ab77553
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Aug 3 22:14:34 2023 +0800
+
+    Merge commit 'ab775532465ce2cdadad01e555c441ae2727413b' into yumain
+
+commit ab775532465ce2cdadad01e555c441ae2727413b
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Aug 3 11:42:37 2023 +0800
+
+    mqtt連接地址修改爲2網段
+
+commit 1495d7ca7c32e1a867d814f32603ebd107ad59a5
+Author: ztyu <peiwvy@163.com>
+Date:   Wed Aug 2 19:18:19 2023 +0800
+
+    ⚡️
+
+commit ff8b36362c67d98729ad559f32b3899bc07040c0
+Merge: 9dec653 ab8515e
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Wed Aug 2 18:05:54 2023 +0800
+
+    mqtt 连接地址修改为shawn pc
+
+commit 9dec653579088a6b0dc4e127e8dfa5c973ae3d21
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Wed Aug 2 18:03:39 2023 +0800
+
+    mqtt增加处理/planning/task_id话题
+
+commit c4f088d3359ddc16d3b6b5e63997dcd278d3e0f9
+Author: ztyu <peiwvy@163.com>
+Date:   Wed Aug 2 15:38:03 2023 +0800
+
+    merege
+
+commit f33681e7a42194a36b792db573839900f732d202
+Merge: 9a5ad77 ab8515e
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Wed Aug 2 15:31:45 2023 +0800
+
+    Merge pull request #1 from zhangxiaouse/main
+    
+    new
+
+commit ab8515e74d5b7d1351f7b5e6322a1ab821eaf026
+Merge: a9b4cc2 abcb3c7
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Wed Aug 2 15:26:29 2023 +0800
+
+    Merge commit 'abcb3c7b862eed564ab8da7022aeb7011acdfb3c' into main
+
+commit abcb3c7b862eed564ab8da7022aeb7011acdfb3c
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Wed Aug 2 15:17:52 2023 +0800
+
+    set livox2 build ROS1
+
+commit fc7a9f9a2962b7e7d1d9e293321afb1947580bf9
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Jun 8 14:01:57 2023 +0800
+
+    命令行输出车辆状态
+
+commit 8104cd5e3d204dbd3f7ded66036aa3807b6b3d4e
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Wed Jun 7 14:30:18 2023 +0800
+
+    测试完成版本
+
+commit 115f155b426be07225f8e03dfcb864b508c7831f
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Wed Jun 7 13:54:16 2023 +0800
+
+    增加手自动切换
+
+commit 7f28ca1a328e28c058d8f3b4b826a612b97c5a2a
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Wed Jun 7 09:35:15 2023 +0800
+
+    增加mqtt通讯控制
+
+commit 779cdf2312b258d8561a2fabad2735b939776db6
+Merge: 76d6d8d eeec62b
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Tue Jun 6 16:51:05 2023 +0800
+
+    Merge branch 'test_lidar_config' of github.com:zhangxiaouse/origin_diver into test_lidar_config
+
+commit 76d6d8d8be48e18176016ede9f2e8039a8569c6a
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Tue Jun 6 16:49:59 2023 +0800
+
+    增加mqtt节点
+
+commit eeec62b19f1f2101c0263d6612db4f063fd98144
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Mon Jun 5 13:27:36 2023 +0800
+
+    debug fix:发送失败
+
+commit 632011e0ca9ee7cf1c2715a03563d1689554298c
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Mon Jun 5 10:59:02 2023 +0800
+
+    增加对定位节点的速度反馈
+
+commit 2ae07e92268a5a7fd4a6fe413ca96d2f1d0e2f0d
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Mon Jun 5 10:44:39 2023 +0800
+
+    增加对车辆进行速度,转向控制
+
+commit f27acf18b465aa1d468413d64cc535b786a7ce23
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Fri Jun 2 10:01:16 2023 +0800
+
+    AGV 左右轮速度反馈正常
+
+commit d228206fae0d95b2d08e5f883acf95cb4a7df958
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Fri Jun 2 09:10:50 2023 +0800
+
+    增加serial_rs232
+
+commit 695c3a66be48fc0dccfdb784026d4ad2a083b61b
+Merge: 35181ad 3f51f55
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Fri Jun 2 09:09:14 2023 +0800
+
+    Merge branch 'test_lidar_config' of github.com:zhangxiaouse/origin_diver into test_lidar_config
+
+commit 3f51f5552366153835c1e795d892448dbbfb7aa8
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Jun 1 18:46:35 2023 +0800
+
+    增加订阅agv速度信息
+
+commit c69a4cbe2deca7c67f4117b18b45a73e31f5a9a9
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Jun 1 18:37:08 2023 +0800
+
+    增加 agv 的速度反馈
+
+commit e0024a18bfede4ae933d8a52914218d0a14c055a
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Jun 1 18:03:10 2023 +0800
+
+    增加tracer底盘模块
+
+commit 72029bf20033857d4d54bd58fa0fa63c07d5de51
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu Jun 1 16:55:42 2023 +0800
+
+    增加agv msgs
+
+commit fddf16e5123d3da8263fe18704aadb0f2d61a769
+Merge: 8525393 9a5ad77
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Tue May 30 23:01:36 2023 +0800
+
+    merge from yu
+
+commit 9a5ad77c39de475374caba048dd61285c4a5e94a
+Author: ztyu <peiwvy@163.com>
+Date:   Mon May 29 11:31:05 2023 +0800
+
+    📝 Change to SpeedFeedbackDiff.msg
+
+commit 8525393f665883d4354f08a43d87077026fcdd51
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Sun May 28 21:12:50 2023 +0800
+
+    增加 安装 config 参数
+
+commit c63a7dc3938a37a338cdfa2158564bee5e1f3422
+Merge: b4229c2 4f150c0
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Sun May 28 20:41:17 2023 +0800
+
+    delete serial node
+
+commit b4229c27e7953176a815262899079b3c8295b712
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Sun May 28 20:38:31 2023 +0800
+
+    delete serial node
+
+commit 35181ad51d93b352b5805e507a95ddbbb3256a84
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Thu May 25 10:02:17 2023 +0800
+
+    install激光雷达配置文件
+
+commit a9b4cc23aeaf6e634c3c20135e092a5b4d4feb7e
+Merge: cd8d19e bc83836
+Author: zhangxiao <zhangxiaouse@163.com>
+Date:   Tue May 23 15:27:50 2023 +0800
+
+    Merge branch 'main' of github.com:zhangxiaouse/origin_diver into main
+
+commit cd8d19eb2b04ff16c88dfdd53fa19b2b25ccb898
+Author: zhangxiao <zhangxiaouse@163.com>
+Date:   Tue May 23 15:25:42 2023 +0800
+
+    修改建图驱动模块的node name
+
+commit bc83836980f9c5845149398988b8923092ada194
+Merge: 60c5aab 2e8d8c8
+Author: zhangxiaouse <zhangxiaouse@sjtu.edu.cn>
+Date:   Mon May 22 16:22:35 2023 +0800
+
+    Merge branch 'Peiwvy:main' into main
+
+commit 4f150c090d4996840683587636aac88a0f38b8cb
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Fri May 5 15:16:01 2023 +0800
+
+    配置激光雷达参数　
+
+commit ce7593b21b24ba9f199fd5896980b4b7a6f7a760
+Merge: 60c5aab 2e8d8c8
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Fri May 5 15:11:48 2023 +0800
+
+    Merge remote-tracking branch 'yu/main' into test_lidar_config
+
+commit 2e8d8c850eec077ad02a6d120a0d7122495f59fd
+Author: ztyu <peiwvy@163.com>
+Date:   Wed Apr 19 16:47:17 2023 +0800
+
+    🐛 clear read_buffer
+
+commit 943ead99e6c5cddcae64424629c85068903c0528
+Author: ztyu <peiwvy@163.com>
+Date:   Mon Apr 17 20:22:02 2023 +0800
+
+    ⚡️ add mutex
+
+commit e052a05fd73961b8d296e7e57850c95395752679
+Merge: 5806fc4 ba742fa
+Author: ztyu <peiwvy@163.com>
+Date:   Mon Apr 17 15:08:51 2023 +0800
+
+    ⚡️
+
+commit 5806fc4d4cc8f16530743246861899afc0756904
+Author: ztyu <peiwvy@163.com>
+Date:   Mon Apr 17 15:03:04 2023 +0800
+
+    add mutx
+
+commit ba742fa17975aa1423bb8cdd6e3183835bc66570
+Author: ztyu <peiwvy@163.com>
+Date:   Sun Apr 16 16:17:39 2023 +0800
+
+    manual thread
+
+commit 7f1d902aab08580dea0f8f9b173884c9dc76c6e5
+Author: ztyu <peiwvy@163.com>
+Date:   Fri Apr 14 16:15:34 2023 +0800
+
+    🎨 add dataReceive flag
+
+commit a2835ef07a8f5b399cf830af09a1b28c6be58099
+Merge: 58c53af 867acae
+Author: ztyu <peiwvy@163.com>
+Date:   Fri Apr 14 16:00:55 2023 +0800
+
+    Merge commit '867acae13c6ef063f6b2ae0f4794e94c52f2d5ee' into main
+
+commit 867acae13c6ef063f6b2ae0f4794e94c52f2d5ee
+Author: ztyu <peiwvy@163.com>
+Date:   Fri Apr 14 15:57:57 2023 +0800
+
+    🔥 opt
+
+commit 08e49a6ea2450e18393fe688f863691257bfc25a
+Author: ztyu <peiwvy@163.com>
+Date:   Fri Apr 14 15:52:18 2023 +0800
+
+    add receive thread
+
+commit 611a25e000eecf2a06cfbe184d43b8e38482ac64
+Author: ztyu <peiwvy@163.com>
+Date:   Fri Apr 14 12:25:00 2023 +0800
+
+    ⚡️ 增加大小端编码
+
+commit 2c565f083864a904452ab2399c63fb459f9dc8dc
+Author: ztyu <peiwvy@163.com>
+Date:   Fri Apr 14 09:50:38 2023 +0800
+
+    aadd info
+
+commit 58c53af52e4b1073e08440933c6d42b7ea47023a
+Author: ztyu <peiwvy@163.com>
+Date:   Fri Apr 14 09:50:16 2023 +0800
+
+    ✨ 提取 serial 类
+
+commit fd0e4f1112ba8ae3dc2341abc0ec60175e0f6d42
+Merge: daee8b4 f55429d
+Author: ztyu <peiwvy@163.com>
+Date:   Thu Apr 13 16:33:36 2023 +0800
+
+    Merge branch 'opt' into main
+
+commit f55429da797bed84d16b3c6d7458d799b2b3b8eb
+Author: ztyu <peiwvy@163.com>
+Date:   Thu Apr 13 16:33:13 2023 +0800
+
+    opt3
+
+commit da54f37673df2ba01c368d6b73aa9b432c946a0d
+Author: ztyu <peiwvy@163.com>
+Date:   Thu Apr 13 09:42:31 2023 +0800
+
+    opt
+
+commit 010a1c4d7ababfc3ce62756ead5859979312a6c6
+Author: ztyu <peiwvy@163.com>
+Date:   Wed Apr 12 20:00:57 2023 +0800
+
+    opt driver
+
+commit daee8b43b0d52a3140c9412c4039fad87258d7c0
+Author: ztyu <peiwvy@163.com>
+Date:   Wed Apr 12 15:45:06 2023 +0800
+
+    ⚡️ 串口模块粘包处理
+
+commit e3ae792b658bdb30ac96a17170c9bd605d7d27be
+Author: ztyu <peiwvy@163.com>
+Date:   Wed Apr 12 14:30:22 2023 +0800
+
+    clang format
+
+commit 60c5aab96514111ee69fc2a014ffc5f5cd904047
+Author: zhangxiaouse <zhangxiaouse@163.com>
+Date:   Mon Apr 10 09:59:32 2023 +0000
+
+    add socket can support for seeed canfd
+
+commit b92669a552e9ae66ae4fdba3a854aec05db17129
+Author: ztyu <peiwvy@163.com>
+Date:   Mon Apr 3 13:14:30 2023 +0800
+
+    🐛 fix bug in serial_rs232 cmakelists
+
+commit daa7baaa47f8619aa07a809096e743dc483376ea
+Author: ztyu <peiwvy@163.com>
+Date:   Thu Mar 23 18:46:31 2023 +0800
+
+    🎨 scritps fix
+
+commit 2dfe68c1ce9c6e42569d77ccf999af6d886ec69d
+Author: ztyu <peiwvy@163.com>
+Date:   Mon Mar 20 19:11:36 2023 +0800
+
+    🐛 bug fix
+
+commit 324d0161bf1e26bfc9185eb7fd14928659957722
+Author: ztyu <peiwvy@163.com>
+Date:   Thu Mar 2 14:38:46 2023 +0800
+
+    init commit
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+"8499049 zhangxiaouse 底层驱动增加监控感知避碰话题,进行减速或停车"
+"161c69d zhangxiaouse merge"
+"409d63d zhangxiaouse merge"
+"05df6e3 ztyu 📈"
+"eb6b964 ztyu 🎨 格式完善"
+"0a35de3 ztyu 🎨"
+"e05bdcd ztyu rename"
+"688fa8b ztyu add perception stop"
+"837111a zhangxiaouse adjust gitignore"
+"8d1bcfc zhangxiaouse  debug fix : add cyberc3_mqtt install file"
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+"8499049 zhangxiaouse Thu Aug 17 13:30:24 2023 +0800 底层驱动增加监控感知避碰话题,进行减速或停车"
+"161c69d zhangxiaouse Thu Aug 17 12:46:36 2023 +0800 merge"
+"409d63d zhangxiaouse Thu Aug 17 12:44:09 2023 +0800 merge"
+"05df6e3 ztyu Wed Aug 16 23:48:16 2023 +0800 📈"
+"eb6b964 ztyu Wed Aug 9 19:52:28 2023 +0800 🎨 格式完善"
+"0a35de3 ztyu Mon Aug 7 16:06:42 2023 +0800 🎨"
+"e05bdcd ztyu Mon Aug 7 16:03:46 2023 +0800 rename"
+"688fa8b ztyu Mon Aug 7 16:03:06 2023 +0800 add perception stop"
+"837111a zhangxiaouse Mon Aug 7 13:56:45 2023 +0800 adjust gitignore"
+"8d1bcfc zhangxiaouse Mon Aug 7 11:02:56 2023 +0800  debug fix : add cyberc3_mqtt install file"
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+"8499049 zhangxiaouse Thu Aug 17 13:30:24 2023 +0800 底层驱动增加监控感知避碰话题,进行减速或停车"
+"161c69d zhangxiaouse Thu Aug 17 12:46:36 2023 +0800 merge"
+"409d63d zhangxiaouse Thu Aug 17 12:44:09 2023 +0800 merge"
+"05df6e3 ztyu Wed Aug 16 23:48:16 2023 +0800 📈"
+"eb6b964 ztyu Wed Aug 9 19:52:28 2023 +0800 🎨 格式完善"
+"0a35de3 ztyu Mon Aug 7 16:06:42 2023 +0800 🎨"
+"e05bdcd ztyu Mon Aug 7 16:03:46 2023 +0800 rename"
+"688fa8b ztyu Mon Aug 7 16:03:06 2023 +0800 add perception stop"
+"837111a zhangxiaouse Mon Aug 7 13:56:45 2023 +0800 adjust gitignore"
+"8d1bcfc zhangxiaouse Mon Aug 7 11:02:56 2023 +0800  debug fix : add cyberc3_mqtt install file"
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+"8499049 zhangxiaouse Thu Aug 17 13:30:24 2023 +0800 底层驱动增加监控感知避碰话题,进行减速或停车"
+"161c69d zhangxiaouse Thu Aug 17 12:46:36 2023 +0800 merge"
+"409d63d zhangxiaouse Thu Aug 17 12:44:09 2023 +0800 merge"
+"05df6e3 ztyu Wed Aug 16 23:48:16 2023 +0800 📈"
+"eb6b964 ztyu Wed Aug 9 19:52:28 2023 +0800 🎨 格式完善"
+"0a35de3 ztyu Mon Aug 7 16:06:42 2023 +0800 🎨"
+"e05bdcd ztyu Mon Aug 7 16:03:46 2023 +0800 rename"
+"688fa8b ztyu Mon Aug 7 16:03:06 2023 +0800 add perception stop"
+"837111a zhangxiaouse Mon Aug 7 13:56:45 2023 +0800 adjust gitignore"
+"8d1bcfc zhangxiaouse Mon Aug 7 11:02:56 2023 +0800  debug fix : add cyberc3_mqtt install file"
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+"8499049 zhangxiaouse Thu Aug 17 13:30:24 2023 +0800 底层驱动增加监控感知避碰话题,进行减速或停车"
+"161c69d zhangxiaouse Thu Aug 17 12:46:36 2023 +0800 merge"
+"409d63d zhangxiaouse Thu Aug 17 12:44:09 2023 +0800 merge"
+"05df6e3 ztyu Wed Aug 16 23:48:16 2023 +0800 📈"
+"eb6b964 ztyu Wed Aug 9 19:52:28 2023 +0800 🎨 格式完善"
+"0a35de3 ztyu Mon Aug 7 16:06:42 2023 +0800 🎨"
+"e05bdcd ztyu Mon Aug 7 16:03:46 2023 +0800 rename"
+"688fa8b ztyu Mon Aug 7 16:03:06 2023 +0800 add perception stop"
+"837111a zhangxiaouse Mon Aug 7 13:56:45 2023 +0800 adjust gitignore"
+"8d1bcfc zhangxiaouse Mon Aug 7 11:02:56 2023 +0800  debug fix : add cyberc3_mqtt install file"
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+"8499049 zhangxiaouse Thu Aug 17 13:30:24 2023 +0800 底层驱动增加监控感知避碰话题,进行减速或停车"
+"161c69d zhangxiaouse Thu Aug 17 12:46:36 2023 +0800 merge"
+"409d63d zhangxiaouse Thu Aug 17 12:44:09 2023 +0800 merge"
+"05df6e3 ztyu Wed Aug 16 23:48:16 2023 +0800 📈"
+"eb6b964 ztyu Wed Aug 9 19:52:28 2023 +0800 🎨 格式完善"
+"0a35de3 ztyu Mon Aug 7 16:06:42 2023 +0800 🎨"
+"e05bdcd ztyu Mon Aug 7 16:03:46 2023 +0800 rename"
+"688fa8b ztyu Mon Aug 7 16:03:06 2023 +0800 add perception stop"
+"837111a zhangxiaouse Mon Aug 7 13:56:45 2023 +0800 adjust gitignore"
+"8d1bcfc zhangxiaouse Mon Aug 7 11:02:56 2023 +0800  debug fix : add cyberc3_mqtt install file"
+main8499-dirty
+84990496934383b84c949d82a2c62591ed4ced5d
+"8499049 zhangxiaouse Thu Aug 17 13:30:24 2023 +0800 底层驱动增加监控感知避碰话题,进行减速或停车"
+"161c69d zhangxiaouse Thu Aug 17 12:46:36 2023 +0800 merge"
+"409d63d zhangxiaouse Thu Aug 17 12:44:09 2023 +0800 merge"
+"05df6e3 ztyu Wed Aug 16 23:48:16 2023 +0800 📈"
+"eb6b964 ztyu Wed Aug 9 19:52:28 2023 +0800 🎨 格式完善"
+"0a35de3 ztyu Mon Aug 7 16:06:42 2023 +0800 🎨"
+"e05bdcd ztyu Mon Aug 7 16:03:46 2023 +0800 rename"
+"688fa8b ztyu Mon Aug 7 16:03:06 2023 +0800 add perception stop"
+"837111a zhangxiaouse Mon Aug 7 13:56:45 2023 +0800 adjust gitignore"
+"8d1bcfc zhangxiaouse Mon Aug 7 11:02:56 2023 +0800  debug fix : add cyberc3_mqtt install file"
